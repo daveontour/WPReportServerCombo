@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
+    <property name="units">in</property>
+    <property name="theme">QRM.defaultTheme</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">WebContent/reports/QRM.rptlibrary</property>
+            <property name="namespace">QRM</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="userEmail" id="8178">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">dsdsadsa dsad dsfdf dsfds</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <page-setup>
+        <simple-master-page name="QRM Report Master Page" id="8069" extends="QRM.QRM Report Master Page">
+            <overridden-values>
+                <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
+                <ref-entry baseId="7883" id="7883"/>
+                <ref-entry baseId="7884" id="8179"/>
+                <ref-entry baseId="7885" id="7885"/>
+                <ref-entry baseId="7886" id="7886"/>
+                <ref-entry baseId="7888" name="NewText" id="7888"/>
+                <ref-entry baseId="7887" id="7887"/>
+                <ref-entry baseId="7889" name="NewTextData27" id="7889"/>
+                <ref-entry baseId="7873" name="NewGrid6" id="7873"/>
+                <ref-entry baseId="7874" id="7874"/>
+                <ref-entry baseId="7875" id="7875"/>
+                <ref-entry baseId="7876" id="7876"/>
+                <ref-entry baseId="7877" id="7877"/>
+                <ref-entry baseId="7878" id="7878"/>
+                <ref-entry baseId="7881" name="NewTextData26" id="7881"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Heading15" id="7884" extends="QRM.Heading1">
+            <property name="pageBreakBefore">avoid</property>
+            <overridden-values>
+                <ref-entry baseId="3967" id="8167"/>
+                <ref-entry baseId="3968" id="8168"/>
+                <ref-entry baseId="3969" id="8169"/>
+                <ref-entry baseId="3970" id="8170"/>
+                <ref-entry baseId="3971" name="NewLabel5" id="8171">
+                    <property name="text">Risk Registry Summary Report - Treatment</property>
+                </ref-entry>
+            </overridden-values>
+        </grid>
+        <table name="Risk Summary Treatment Format" id="7920" extends="QRM.Risk Summary Treatment Format">
+            <overridden-values>
+                <ref-entry baseId="7833" id="7833">
+                    <property name="groupName">project</property>
+                </ref-entry>
+                <ref-entry baseId="7834" id="7834"/>
+                <ref-entry baseId="7835" id="7835"/>
+                <ref-entry baseId="7836" id="7836"/>
+                <ref-entry baseId="5004" name="NewLabel69" id="5004"/>
+                <ref-entry baseId="7847" id="8172"/>
+                <ref-entry baseId="7848" id="7848"/>
+                <ref-entry baseId="7853" name="NewTextData13" id="7853"/>
+                <ref-entry baseId="7849" id="7849"/>
+                <ref-entry baseId="5007" name="NewLabel70" id="5007"/>
+                <ref-entry baseId="7850" id="7850"/>
+                <ref-entry baseId="5009" name="NewLabel73" id="5009"/>
+                <ref-entry baseId="7851" id="7851"/>
+                <ref-entry baseId="5011" name="NewLabel74" id="5011"/>
+                <ref-entry baseId="7852" id="7852"/>
+                <ref-entry baseId="5013" name="NewLabel75" id="5013"/>
+                <ref-entry baseId="5014" id="5014"/>
+                <ref-entry baseId="5015" id="5015"/>
+                <ref-entry baseId="5016" name="NewTextData16" id="5016"/>
+                <ref-entry baseId="5017" id="5017"/>
+                <ref-entry baseId="6539" name="NewImage6" id="6539"/>
+                <ref-entry baseId="5019" id="5019"/>
+                <ref-entry baseId="5020" name="NewImage25" id="5020"/>
+                <ref-entry baseId="5021" id="5021"/>
+                <ref-entry baseId="5022" name="NewImage26" id="5022"/>
+                <ref-entry baseId="5023" id="5023"/>
+                <ref-entry baseId="5024" name="NewImage27" id="5024"/>
+                <ref-entry baseId="5025" id="5025"/>
+                <ref-entry baseId="5026" id="5026"/>
+                <ref-entry baseId="5027" id="5027"/>
+                <ref-entry baseId="5028" id="5028"/>
+                <ref-entry baseId="4942" id="4942"/>
+                <ref-entry baseId="4943" id="4943"/>
+                <ref-entry baseId="4944" id="4944">
+                    <property name="width">100%</property>
+                </ref-entry>
+                <ref-entry baseId="4945" id="4945">
+                    <property name="width">2.5cm</property>
+                </ref-entry>
+                <ref-entry baseId="4946" id="4946">
+                    <property name="width">2.5cm</property>
+                </ref-entry>
+                <ref-entry baseId="4947" id="4947">
+                    <property name="width">2.5cm</property>
+                </ref-entry>
+                <ref-entry baseId="4948" id="4948">
+                    <property name="width">2.5cm</property>
+                </ref-entry>
+            </overridden-values>
+        </table>
+    </body>
+</report>

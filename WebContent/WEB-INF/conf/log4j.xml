@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+	<appender name="ROLL" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="/var/log/qrm.log" />
+		<param name="MaxFileSize" value="10MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+			<param name="FileNamePattern" value="/var/log/qrm.%d.log.gz" />
+		</rollingPolicy>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p %C{1} - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="au.com.quaysystems.qrm.server.servlet" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="ROLL" />
+	</logger>
+
+	<logger name="au.com.quaysystems.qrm" additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="ROLL" />
+	</logger>
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p %C{1} - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="org.hibernate" additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<root>
+		<level value="OFF" />
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</log4j:configuration>

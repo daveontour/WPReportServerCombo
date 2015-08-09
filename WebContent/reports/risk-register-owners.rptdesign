@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
+    <property name="units">in</property>
+    <property name="theme">QRM.defaultTheme</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">WebContent/reports/QRM.rptlibrary</property>
+            <property name="namespace">QRM</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="userEmail" id="8178">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">dsdsadsa dsad dsfdf dsfds</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <page-setup>
+        <simple-master-page name="QRM Report Master Page" id="8069" extends="QRM.QRM Report Master Page">
+            <overridden-values>
+                <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
+                <ref-entry baseId="7883" id="7883"/>
+                <ref-entry baseId="7884" id="8179"/>
+                <ref-entry baseId="7885" id="7885"/>
+                <ref-entry baseId="7886" id="7886"/>
+                <ref-entry baseId="7888" name="NewText" id="7888"/>
+                <ref-entry baseId="7887" id="7887"/>
+                <ref-entry baseId="7889" name="NewTextData27" id="7889"/>
+                <ref-entry baseId="7873" name="NewGrid6" id="7873"/>
+                <ref-entry baseId="7874" id="7874"/>
+                <ref-entry baseId="7875" id="7875"/>
+                <ref-entry baseId="7876" id="7876"/>
+                <ref-entry baseId="7877" id="7877"/>
+                <ref-entry baseId="7878" id="7878"/>
+                <ref-entry baseId="7881" name="NewTextData26" id="7881"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Heading13" id="7809" extends="QRM.Heading1">
+            <property name="pageBreakBefore">auto</property>
+            <overridden-values>
+                <ref-entry baseId="3967" id="8152"/>
+                <ref-entry baseId="3968" id="8153"/>
+                <ref-entry baseId="3969" id="8154"/>
+                <ref-entry baseId="3970" id="8155"/>
+                <ref-entry baseId="3971" name="NewLabel3" id="8156">
+                    <property name="text">Risk Registry Summary Report - Risk Owners</property>
+                </ref-entry>
+            </overridden-values>
+        </grid>
+        <table name="Risk Owner List" id="7815" extends="QRM.Risk Owner List">
+            <overridden-values>
+                <ref-entry baseId="7760" id="7760">
+                    <property name="groupName">owners</property>
+                </ref-entry>
+                <ref-entry baseId="7761" id="8157"/>
+                <ref-entry baseId="7762" id="7762"/>
+                <ref-entry baseId="7763" name="NewTextData91" id="7763"/>
+                <ref-entry baseId="7764" id="7764"/>
+                <ref-entry baseId="7765" name="NewLabel202" id="7765"/>
+                <ref-entry baseId="7766" id="7766"/>
+                <ref-entry baseId="7767" name="NewLabel212" id="7767"/>
+                <ref-entry baseId="7768" id="8158"/>
+                <ref-entry baseId="7769" name="NewLabel222" id="7769"/>
+                <ref-entry baseId="7770" id="7770"/>
+                <ref-entry baseId="7771" id="7771"/>
+                <ref-entry baseId="7772" name="NewTextData242" id="7772"/>
+                <ref-entry baseId="7773" id="7773"/>
+                <ref-entry baseId="7774" name="NewData152" id="7774"/>
+                <ref-entry baseId="7775" id="7775"/>
+                <ref-entry baseId="7776" name="NewData162" id="7776"/>
+                <ref-entry baseId="7777" id="7777"/>
+                <ref-entry baseId="7778" name="NewData172" id="7778"/>
+                <ref-entry baseId="7779" id="7779"/>
+                <ref-entry baseId="7780" id="7780"/>
+                <ref-entry baseId="7781" id="7781"/>
+                <ref-entry baseId="7782" id="7782"/>
+                <ref-entry baseId="7783" id="7783"/>
+            </overridden-values>
+        </table>
+    </body>
+</report>
