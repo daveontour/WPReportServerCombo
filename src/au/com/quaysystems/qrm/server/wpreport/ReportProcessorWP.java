@@ -13,10 +13,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 
-import javax.persistence.Transient;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -49,6 +49,7 @@ import au.com.quaysystems.qrm.wp.model.AuditItem;
 import au.com.quaysystems.qrm.wp.model.Category;
 import au.com.quaysystems.qrm.wp.model.Comment;
 import au.com.quaysystems.qrm.wp.model.Control;
+import au.com.quaysystems.qrm.wp.model.ReportJob;
 import au.com.quaysystems.qrm.wp.model.RespPlan;
 import au.com.quaysystems.qrm.wp.model.Response;
 import au.com.quaysystems.qrm.wp.model.Review;
@@ -69,6 +70,7 @@ public class ReportProcessorWP  extends HttpServlet{
 	private static Properties configProp = new Properties();
 	private IReportEngine engine;
 	private Configuration repConfig;
+	private Configuration auditConfig;
 	private Properties props;
 	private String hostURLRoot;
 	private String hostUser;
@@ -76,6 +78,8 @@ public class ReportProcessorWP  extends HttpServlet{
 	private String hibernateDialect;
 	static public Connection conn;
 	private HashMap<String, String> reports = new HashMap<String, String>();
+	private String hostDriverClass;
+	private String hostURLReportAudit;
 
 	@SuppressWarnings("unchecked")
 	public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -97,6 +101,10 @@ public class ReportProcessorWP  extends HttpServlet{
 
 		createDatabase(conn,dbname);
 		
+		final Session auditsess = getAuditSession();
+		final Session sess = getSession();
+		final ReportJob job = new ReportJob();
+		
 		//Parse the data 
 		
 		try {
@@ -113,6 +121,18 @@ public class ReportProcessorWP  extends HttpServlet{
 			taskParamMap.put("userDisplayName", imp.userDisplayName);
 			taskParamMap.put("siteName", imp.siteName);
 			taskParamMap.put("userLogin", imp.userLogin);
+			
+			
+			job.completed = false;
+			job.siteID = imp.siteID;
+			job.siteKey = imp.siteKey;
+			job.siteName = imp.siteName;
+			job.userDisplayName = imp.userDisplayName;
+			job.userEmail = imp.userEmail;
+			job.userLogin = imp.userLogin;
+			job.reportID = reportID;
+			job.reportName = reportName;
+			job.submittedDate = new Date();
 
 			boolean prepareMatrix = false;
 			
@@ -122,7 +142,7 @@ public class ReportProcessorWP  extends HttpServlet{
 			
 			imp.normalise(prepareMatrix);
 
-			final Session sess = getSession();			
+					
 			sess.doWork(
 					new Work() {
 						@Override
@@ -137,6 +157,23 @@ public class ReportProcessorWP  extends HttpServlet{
 						}
 					}
 			);
+
+					
+			auditsess.doWork(
+					new Work() {
+						@Override
+						public void execute(java.sql.Connection arg0){
+							try {
+								Transaction txn = auditsess.beginTransaction();
+								auditsess.save(job);
+								txn.commit();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}							
+						}
+					}
+			);
+		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,6 +208,24 @@ public class ReportProcessorWP  extends HttpServlet{
 			e.printStackTrace();
 		} finally {
 			try {
+				
+				job.completed =true;
+				job.completedDate = new Date();
+				
+				auditsess.doWork(
+						new Work() {
+							@Override
+							public void execute(java.sql.Connection arg0){
+								try {
+									Transaction txn = auditsess.beginTransaction();
+									auditsess.update(job);
+									txn.commit();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}							
+							}
+						}
+				);
 				
 				if (conn.isClosed()){
 					conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass);
@@ -212,8 +267,18 @@ public class ReportProcessorWP  extends HttpServlet{
 
 		engine = BirtEngineFactory.getInstance(configProp);
 
+		props = configProp;
+
+		hostURLRoot = props.getProperty("HOSTURLROOT");
+		hostURLReportAudit = props.getProperty("HOSTURLREPORTAUDIT");
+		hostUser = props.getProperty("HOSTUSER");
+		hostPass = props.getProperty("HOSTUSERPASS");
+		hibernateDialect = props.getProperty("HIBERNATEDIALECT");
+		hostDriverClass = props.getProperty("HOSTDRIVERCLASS");
+
 		repConfig = new Configuration()
 		.setProperty("hibernate.cache.use_second_level_cache",	"false")
+		.setProperty("hibernate.dialect", hibernateDialect)
 		.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
 		.addAnnotatedClass(AuditItem.class)
 		.addAnnotatedClass(Audit.class)
@@ -235,13 +300,17 @@ public class ReportProcessorWP  extends HttpServlet{
 		.addAnnotatedClass(User.class)
 		.addAnnotatedClass(QRMImport.class);
 
-		props = configProp;
+		auditConfig = new Configuration()
+		.setProperty("hibernate.connection.driver_class",hostDriverClass)
+		.setProperty("hibernate.hbm2ddl.auto", "update")
+		.setProperty("hibernate.connection.url",hostURLReportAudit)
+		.setProperty("hibernate.connection.username",hostUser)
+		.setProperty("hibernate.connection.password",hostPass)
+		.setProperty("hibernate.dialect", hibernateDialect)
+		.setProperty("hibernate.show_sql", "true")
+		.addAnnotatedClass(ReportJob.class);
+		
 
-		hostURLRoot = props.getProperty("HOSTURLROOT");
-		hostUser = props.getProperty("HOSTUSER");
-		hostPass = props.getProperty("HOSTUSERPASS");
-		hibernateDialect = props.getProperty("HIBERNATEDIALECT");
-		repConfig.setProperty("hibernate.dialect",hibernateDialect);
 
 	}
 
@@ -250,6 +319,14 @@ public class ReportProcessorWP  extends HttpServlet{
 		serviceRegistryBuilder.applySettings(repConfig.getProperties());
 		ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
 		SessionFactory sf = repConfig.buildSessionFactory(serviceRegistry);
+		return sf.openSession();
+	}	
+	
+	private Session getAuditSession(){
+		StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+		serviceRegistryBuilder.applySettings(auditConfig.getProperties());
+		ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+		SessionFactory sf = auditConfig.buildSessionFactory(serviceRegistry);
 		return sf.openSession();
 	}
 
