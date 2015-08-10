@@ -112,7 +112,7 @@ public class ReportProcessorWP  extends HttpServlet{
 			taskParamMap.put("siteKey", imp.siteKey);
 			taskParamMap.put("userDisplayName", imp.userDisplayName);
 			taskParamMap.put("siteName", imp.siteName);
-			taskParamMap.put("userLogin", imp.siteKey);
+			taskParamMap.put("userLogin", imp.userLogin);
 
 			boolean prepareMatrix = false;
 			

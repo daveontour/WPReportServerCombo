@@ -556,12 +556,33 @@
                     <cell id="7187">
                         <property name="colSpan">2</property>
                         <property name="rowSpan">1</property>
-                        <text-data id="7189">
-                            <property name="fontWeight">bold</property>
-                            <property name="paddingBottom">1pt</property>
-                            <expression name="valueExpr">row["riskProjectCode"]+" - "+row["title"]</expression>
-                            <property name="contentType">html</property>
-                        </text-data>
+                        <grid id="7891">
+                            <property name="width">7.847222222222222in</property>
+                            <column id="7892">
+                                <property name="width">5.833333333333333in</property>
+                            </column>
+                            <column id="7893">
+                                <property name="width">2.013888888888889in</property>
+                            </column>
+                            <row id="7894">
+                                <cell id="7895">
+                                    <text-data id="7189">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <expression name="valueExpr">row["riskProjectCode"]+" - "+row["title"]</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                </cell>
+                                <cell id="7896">
+                                    <text-data id="7897">
+                                        <property name="paddingRight">15pt</property>
+                                        <property name="textAlign">right</property>
+                                        <expression name="valueExpr">(row["treated"])?"Treated":"Un Treated"</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                </cell>
+                            </row>
+                        </grid>
                     </cell>
                 </row>
                 <row id="164">
@@ -1228,7 +1249,7 @@
                                     <property name="rowSpan">1</property>
                                     <label id="3701">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="fontWeight">normal</property>
                                         <property name="textAlign">right</property>
                                         <text-property name="text">Impacts Human Safety:</text-property>
@@ -1266,7 +1287,7 @@
                                     <property name="verticalAlign">top</property>
                                     <label id="3714">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="fontWeight">normal</property>
                                         <property name="textAlign">right</property>
                                         <text-property name="text">Impacts Specification:</text-property>
@@ -1303,7 +1324,7 @@
                                     <property name="verticalAlign">top</property>
                                     <label id="4771">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="paddingTop">1pt</property>
                                         <property name="paddingRight">1pt</property>
                                         <property name="textAlign">right</property>
@@ -1340,7 +1361,7 @@
                                     <property name="verticalAlign">top</property>
                                     <label id="4773">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="paddingTop">1pt</property>
                                         <property name="paddingRight">1pt</property>
                                         <property name="textAlign">right</property>
@@ -1377,7 +1398,7 @@
                                 <cell id="3700">
                                     <label id="3719">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="fontWeight">normal</property>
                                         <property name="textAlign">right</property>
                                         <text-property name="text">Impacts Environment:</text-property>
@@ -1412,7 +1433,7 @@
                                     <property name="paddingLeft">10pt</property>
                                     <label id="3724">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="fontWeight">normal</property>
                                         <property name="textAlign">right</property>
                                         <text-property name="text">Impacts Reputation:</text-property>
@@ -1447,7 +1468,7 @@
                                     <property name="paddingLeft">10pt</property>
                                     <label id="4772">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="paddingTop">1pt</property>
                                         <property name="paddingRight">1pt</property>
                                         <property name="textAlign">right</property>
@@ -1482,7 +1503,7 @@
                                     <property name="paddingLeft">10pt</property>
                                     <label id="4774">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="paddingTop">1pt</property>
                                         <property name="paddingRight">1pt</property>
                                         <property name="textAlign">right</property>
@@ -1518,7 +1539,7 @@
                                 <cell id="3713">
                                     <label id="3729">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="fontWeight">normal</property>
                                         <property name="textAlign">right</property>
                                         <text-property name="text">Impacts Schedule:</text-property>
@@ -1553,7 +1574,7 @@
                                     <property name="paddingLeft">10pt</property>
                                     <label id="3734">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">9pt</property>
+                                        <property name="fontSize">10pt</property>
                                         <property name="fontWeight">normal</property>
                                         <property name="textAlign">right</property>
                                         <text-property name="text">Impacts Cost:</text-property>

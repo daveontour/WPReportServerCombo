@@ -39,6 +39,7 @@ public class Incident {
     @OrderColumn
     int [] risks;
 	public void normalise() {
+		if (comments == null) return;
 		for (Comment comment:comments){
 			comment.normalise();
 		}
