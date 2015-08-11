@@ -604,10 +604,11 @@
                         </label>
                     </cell>
                     <cell id="166">
-                        <data id="7698">
+                        <text id="7899">
                             <property name="paddingTop">10pt</property>
-                            <property name="resultSetColumn">description</property>
-                        </data>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["description"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
                 <row id="6671">
@@ -628,9 +629,10 @@
                         </label>
                     </cell>
                     <cell id="6673">
-                        <data id="7699">
-                            <property name="resultSetColumn">consequence</property>
-                        </data>
+                        <text id="7900">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["consequence"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
                 <row id="6663">
@@ -651,9 +653,10 @@
                         </label>
                     </cell>
                     <cell id="6665">
-                        <data id="7700">
-                            <property name="resultSetColumn">cause</property>
-                        </data>
+                        <text id="7901">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["cause"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
                 <row id="170">
@@ -1637,10 +1640,11 @@
                     </cell>
                     <cell id="7735">
                         <property name="paddingTop">1pt</property>
-                        <data id="7742">
-                            <property name="marginTop">10pt</property>
-                            <property name="resultSetColumn">mitPlanSummary</property>
-                        </data>
+                        <text id="7902">
+                            <property name="paddingTop">10pt</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["mitPlanSummary"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
                 <row id="7730">
@@ -1658,9 +1662,10 @@
                         </label>
                     </cell>
                     <cell id="7732">
-                        <data id="7743">
-                            <property name="resultSetColumn">mitPlanSummaryUpdate</property>
-                        </data>
+                        <text id="7903">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["mitPlanSummaryUpdate"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
                 <row id="7738">
@@ -1887,10 +1892,11 @@
                         </label>
                     </cell>
                     <cell id="7752">
-                        <data id="7756">
-                            <property name="marginTop">10pt</property>
-                            <property name="resultSetColumn">respPlanSummary</property>
-                        </data>
+                        <text id="7904">
+                            <property name="paddingTop">10pt</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["respPlanSummary"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
                 <row id="7747">
@@ -1908,9 +1914,10 @@
                         </label>
                     </cell>
                     <cell id="7749">
-                        <data id="7757">
-                            <property name="resultSetColumn">respPlanSummaryUpdate</property>
-                        </data>
+                        <text id="7905">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["respPlanSummaryUpdate"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
                 <row id="7744">

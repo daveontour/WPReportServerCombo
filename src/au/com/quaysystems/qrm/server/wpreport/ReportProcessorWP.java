@@ -1,9 +1,12 @@
 package au.com.quaysystems.qrm.server.wpreport;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -15,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -36,6 +40,7 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
 import org.hibernate.service.ServiceRegistry;
 
@@ -78,16 +83,32 @@ public class ReportProcessorWP  extends HttpServlet{
 	private String hibernateDialect;
 	static public Connection conn;
 	private HashMap<String, String> reports = new HashMap<String, String>();
+	private HashMap<String, String> reportnames = new HashMap<String, String>();
 	private String hostDriverClass;
 	private String hostURLReportAudit;
 
 	@SuppressWarnings("unchecked")
 	public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+		String action = req.getParameter("action");
+		
+		if (action.equalsIgnoreCase("execute_report")){
+			serviceReport(req, response);
+			return;
+		}
+		if (action.equalsIgnoreCase("get_report")){
+			getReport(req, response);
+			return;
+		}
+		if (action.equalsIgnoreCase("get_userreports")){
+			getUserReports(req, response);
+			return;
+		}
+	}
+	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>(); 
 		SecureRandom random = new SecureRandom();
 		String dbname = new BigInteger(130, random).toString(32);
-		dbname = "qrm3";
 		String reportData = req.getParameter("reportData");
 		String reportID = req.getParameter("reportID");
 		String reportName = reports.get(reportID);
@@ -122,6 +143,10 @@ public class ReportProcessorWP  extends HttpServlet{
 			taskParamMap.put("siteName", imp.siteName);
 			taskParamMap.put("userLogin", imp.userLogin);
 			
+			String ipAddress = req.getHeader("X-FORWARDED-FOR");  
+			if (ipAddress == null) {  
+				ipAddress = req.getRemoteAddr();  
+			}
 			
 			job.completed = false;
 			job.siteID = imp.siteID;
@@ -133,6 +158,9 @@ public class ReportProcessorWP  extends HttpServlet{
 			job.reportID = reportID;
 			job.reportName = reportName;
 			job.submittedDate = new Date();
+			job.ip = ipAddress;
+			job.reportTitle = reportnames.get(job.reportID);
+		
 
 			boolean prepareMatrix = false;
 			
@@ -157,7 +185,6 @@ public class ReportProcessorWP  extends HttpServlet{
 						}
 					}
 			);
-
 					
 			auditsess.doWork(
 					new Work() {
@@ -178,16 +205,20 @@ public class ReportProcessorWP  extends HttpServlet{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		
 		try {			
 			response.setHeader("Content-Disposition", "attachment; filename=QRMReport.pdf");
 			response.setContentType("application/pdf");
+			
+			
 
 			IRenderOption options = new RenderOption();
 			options.setOutputFormat(HTMLRenderOption.OUTPUT_FORMAT_PDF);
 			options.setEmitterID("org.eclipse.birt.report.engine.emitter.pdf" );
 			options.setOption(IPDFRenderOption.PAGE_OVERFLOW, IPDFRenderOption. OUTPUT_TO_MULTIPLE_PAGES);
-			options.setOutputStream(response.getOutputStream());
+//			options.setOutputStream(response.getOutputStream());
+			options.setOutputStream(os);
 
 			String file = configProp.getProperty("REPORT_PATH")+ reportName;
 			file = file.replace("\\", "/");
@@ -203,7 +234,12 @@ public class ReportProcessorWP  extends HttpServlet{
 				task.run();
 			} catch (Exception e) {
 				e.printStackTrace();
-			}			
+			}
+			
+			job.reportResult = os.toByteArray();
+			
+			os.writeTo(response.getOutputStream());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -230,14 +266,99 @@ public class ReportProcessorWP  extends HttpServlet{
 				if (conn.isClosed()){
 					conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass);
 				}
-//				Statement stmt = conn.createStatement();
-//				stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
-//				stmt.executeBatch();
+				Statement stmt = conn.createStatement();
+				stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
+				stmt.executeBatch();
 				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				auditsess.close();
 			}
 		}
+	}
+
+	public void getReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+
+
+		String userEmail = req.getParameter("userEmail");
+		String userLogin = req.getParameter("userLogin");
+		String siteKey = req.getParameter("siteKey");
+		String id = req.getParameter("id");
+		
+		ReportJob job = null;
+		
+		ByteArrayOutputStream bs = new ByteArrayOutputStream();
+				
+		final Session auditsess = getAuditSession();
+		
+		try {
+			
+			job = (ReportJob) auditsess.createCriteria(ReportJob.class)
+					.add(Restrictions.eq("id",Long.parseLong(id)))
+					.add(Restrictions.eq("siteKey",siteKey))
+					.add(Restrictions.eq("userEmail",userEmail))
+					.add(Restrictions.eq("userLogin",userLogin))
+					.uniqueResult();
+						
+			ByteArrayInputStream stream = new ByteArrayInputStream(job.reportResult);
+			int a1 = stream.read();
+			while (a1 >= 0){
+				bs.write((char)a1);
+				a1 = stream.read();
+			}
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {			
+			response.setHeader("Content-Disposition", "attachment; filename=QRMReport.pdf");
+			response.setContentType("application/pdf");
+			bs.writeTo(response.getOutputStream());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			bs.close();
+			auditsess.close();
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public void getUserReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+
+		String userEmail = req.getParameter("userEmail");
+		String userLogin = req.getParameter("userLogin");
+		String siteKey = req.getParameter("siteKey");
+		
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		
+		List<ReportJob> job = null;
+						
+		Session auditsess = getAuditSession();
+		
+		try {
+			
+			job =  auditsess.createCriteria(ReportJob.class)
+					.add(Restrictions.eq("siteKey",siteKey))
+					.add(Restrictions.eq("userEmail",userEmail))
+					.add(Restrictions.eq("userLogin",userLogin))
+					.list();		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			auditsess.close();
+		}
+		
+		String callback= req.getParameter("callback");
+		String json = gson.toJson(job);
+		String res = callback+"("+json+")";
+		
+		   response.setContentType("text/javascript");
+		   PrintWriter out = response.getWriter();
+		   out.println(res);
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -257,6 +378,7 @@ public class ReportProcessorWP  extends HttpServlet{
 				
 				Gson gson = new Gson();
 				reports = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTS"), HashMap.class);
+				reportnames = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTNAMES"), HashMap.class);
 
 			} catch (IOException e) {
 				e.printStackTrace();
