@@ -34,6 +34,7 @@ import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -51,10 +52,12 @@ import au.com.quaysystems.qrm.server.BirtEngineFactory;
 import au.com.quaysystems.qrm.wp.QRMImport;
 import au.com.quaysystems.qrm.wp.model.Audit;
 import au.com.quaysystems.qrm.wp.model.AuditItem;
+import au.com.quaysystems.qrm.wp.model.AvailableReport;
 import au.com.quaysystems.qrm.wp.model.Category;
 import au.com.quaysystems.qrm.wp.model.Comment;
 import au.com.quaysystems.qrm.wp.model.Control;
 import au.com.quaysystems.qrm.wp.model.ReportJob;
+import au.com.quaysystems.qrm.wp.model.ReportSet;
 import au.com.quaysystems.qrm.wp.model.RespPlan;
 import au.com.quaysystems.qrm.wp.model.Response;
 import au.com.quaysystems.qrm.wp.model.Review;
@@ -82,15 +85,16 @@ public class ReportProcessorWP  extends HttpServlet{
 	private String hostPass;
 	private String hibernateDialect;
 	static public Connection conn;
-	private HashMap<String, String> reports = new HashMap<String, String>();
-	private HashMap<String, String> reportnames = new HashMap<String, String>();
 	private String hostDriverClass;
 	private String hostURLReportAudit;
 
 	@SuppressWarnings("unchecked")
 	public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+
+		HashMap<Long, AvailableReport> reports = new HashMap<Long, AvailableReport>();
+
 		String action = req.getParameter("action");
-		
+
 		if (action.equalsIgnoreCase("execute_report")){
 			serviceReport(req, response);
 			return;
@@ -103,6 +107,10 @@ public class ReportProcessorWP  extends HttpServlet{
 			getUserReports(req, response);
 			return;
 		}
+		if (action.equalsIgnoreCase("get_availablereports")){
+			getAvailableReports(req, response);
+			return;
+		}
 	}
 	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
@@ -111,158 +119,173 @@ public class ReportProcessorWP  extends HttpServlet{
 		String dbname = new BigInteger(130, random).toString(32);
 		String reportData = req.getParameter("reportData");
 		String reportID = req.getParameter("reportID");
-		String reportName = reports.get(reportID);
-		
+
+
 		try {
-			conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		createDatabase(conn,dbname);
-		
-		final Session auditsess = getAuditSession();
-		final Session sess = getSession();
-		final ReportJob job = new ReportJob();
-		
-		//Parse the data 
-		
-		try {
-			
-			GsonBuilder builder = new GsonBuilder();
-			builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
-			builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
-			Gson gson = builder.create();
-			final QRMImport imp = gson.fromJson(reportData, QRMImport.class);
-			
-			taskParamMap.put("userEmail", imp.userEmail);
-			taskParamMap.put("siteID", imp.siteID);
-			taskParamMap.put("siteKey", imp.siteKey);
-			taskParamMap.put("userDisplayName", imp.userDisplayName);
-			taskParamMap.put("siteName", imp.siteName);
-			taskParamMap.put("userLogin", imp.userLogin);
-			
-			String ipAddress = req.getHeader("X-FORWARDED-FOR");  
-			if (ipAddress == null) {  
-				ipAddress = req.getRemoteAddr();  
-			}
-			
-			job.completed = false;
-			job.siteID = imp.siteID;
-			job.siteKey = imp.siteKey;
-			job.siteName = imp.siteName;
-			job.userDisplayName = imp.userDisplayName;
-			job.userEmail = imp.userEmail;
-			job.userLogin = imp.userLogin;
-			job.reportID = reportID;
-			job.reportName = reportName;
-			job.submittedDate = new Date();
-			job.ip = ipAddress;
-			job.reportTitle = reportnames.get(job.reportID);
-		
-
-			boolean prepareMatrix = false;
-			
-			if (reportID.equalsIgnoreCase("1")){
-				prepareMatrix = true;
-			}
-			
-			imp.normalise(prepareMatrix);
-
-					
-			sess.doWork(
-					new Work() {
-						@Override
-						public void execute(java.sql.Connection arg0){
-							try {
-								Transaction txn = sess.beginTransaction();
-								sess.save(imp);
-								txn.commit();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}							
-						}
-					}
-			);
-					
-			auditsess.doWork(
-					new Work() {
-						@Override
-						public void execute(java.sql.Connection arg0){
-							try {
-								Transaction txn = auditsess.beginTransaction();
-								auditsess.save(job);
-								txn.commit();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}							
-						}
-					}
-			);
-		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		
-		try {			
-			response.setHeader("Content-Disposition", "attachment; filename=QRMReport.pdf");
-			response.setContentType("application/pdf");
-			
-			
-
-			IRenderOption options = new RenderOption();
-			options.setOutputFormat(HTMLRenderOption.OUTPUT_FORMAT_PDF);
-			options.setEmitterID("org.eclipse.birt.report.engine.emitter.pdf" );
-			options.setOption(IPDFRenderOption.PAGE_OVERFLOW, IPDFRenderOption. OUTPUT_TO_MULTIPLE_PAGES);
-//			options.setOutputStream(response.getOutputStream());
-			options.setOutputStream(os);
-
-			String file = configProp.getProperty("REPORT_PATH")+ reportName;
-			file = file.replace("\\", "/");
-			InputStream  is = new FileInputStream(file);
-
-			IRunAndRenderTask task = engine.createRunAndRenderTask(engine.openReportDesign(is));
-			task.setRenderOption(options);
-
-			task.setParameterValues(taskParamMap);
-			task.getAppContext().put("OdaJDBCDriverPassInConnection", conn);
-
 			try {
-				task.run();
-			} catch (Exception e) {
+				conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass);
+			} catch (SQLException e) {
 				e.printStackTrace();
+				return;
 			}
-			
-			job.reportResult = os.toByteArray();
-			
-			os.writeTo(response.getOutputStream());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
+
+			createDatabase(conn,dbname);
+
+			final Session auditsess = getAuditSession();
+			final Session sess = getSession();
+			final ReportJob job = new ReportJob();
+
+			AvailableReport report = (AvailableReport) auditsess.get(AvailableReport.class, Long.parseLong(reportID));
+			String reportName = report.filename;
+
+			//Parse the data 
+
 			try {
-				
-				job.completed =true;
-				job.completedDate = new Date();
-				
-				auditsess.doWork(
+
+				GsonBuilder builder = new GsonBuilder();
+				builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
+				builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
+				Gson gson = builder.create();
+				final QRMImport imp = gson.fromJson(reportData, QRMImport.class);
+
+				taskParamMap.put("userEmail", imp.userEmail);
+				taskParamMap.put("siteID", imp.siteID);
+				taskParamMap.put("siteKey", imp.siteKey);
+				taskParamMap.put("userDisplayName", imp.userDisplayName);
+				taskParamMap.put("siteName", imp.siteName);
+				taskParamMap.put("userLogin", imp.userLogin);
+
+				String ipAddress = req.getHeader("X-FORWARDED-FOR");  
+				if (ipAddress == null) {  
+					ipAddress = req.getRemoteAddr();  
+				}
+
+				job.completed = false;
+				job.siteID = imp.siteID;
+				job.siteKey = imp.siteKey;
+				job.siteName = imp.siteName;
+				job.userDisplayName = imp.userDisplayName;
+				job.userEmail = imp.userEmail;
+				job.userLogin = imp.userLogin;
+				job.reportID = reportID;
+				job.reportName = reportName;
+				job.submittedDate = new Date();
+				job.ip = ipAddress;
+				job.reportTitle = report.title;
+
+
+				boolean prepareMatrix = false;
+
+				if (report.req_riskMatrix){
+					prepareMatrix = true;
+				}
+
+				imp.normalise(prepareMatrix);
+
+
+				sess.doWork(
 						new Work() {
 							@Override
 							public void execute(java.sql.Connection arg0){
 								try {
-									Transaction txn = auditsess.beginTransaction();
-									auditsess.update(job);
+									Transaction txn = sess.beginTransaction();
+									sess.save(imp);
 									txn.commit();
 								} catch (Exception e) {
 									e.printStackTrace();
 								}							
 							}
 						}
-				);
-				
+						);
+
+				auditsess.doWork(
+						new Work() {
+							@Override
+							public void execute(java.sql.Connection arg0){
+								try {
+									Transaction txn = auditsess.beginTransaction();
+									auditsess.save(job);
+									txn.commit();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}							
+							}
+						}
+						);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+			try {			
+				response.setHeader("Content-Disposition", "attachment; filename=QRMReport.pdf");
+				response.setContentType("application/pdf");
+
+
+
+				IRenderOption options = new RenderOption();
+				options.setOutputFormat(HTMLRenderOption.OUTPUT_FORMAT_PDF);
+				options.setEmitterID("org.eclipse.birt.report.engine.emitter.pdf" );
+				options.setOption(IPDFRenderOption.PAGE_OVERFLOW, IPDFRenderOption. OUTPUT_TO_MULTIPLE_PAGES);
+				options.setOutputStream(os);
+
+				String file = configProp.getProperty("REPORT_PATH")+ reportName;
+				file = file.replace("\\", "/");
+				InputStream  is = new FileInputStream(file);
+
+				IRunAndRenderTask task = engine.createRunAndRenderTask(engine.openReportDesign(is));
+				task.setRenderOption(options);
+
+				task.setParameterValues(taskParamMap);
+				task.getAppContext().put("OdaJDBCDriverPassInConnection", conn);
+
+				try {
+					task.run();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				job.reportResult = os.toByteArray();
+
+				os.writeTo(response.getOutputStream());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			} finally {
+				try {
+
+					job.completed =true;
+					job.completedDate = new Date();
+
+					auditsess.doWork(
+							new Work() {
+								@Override
+								public void execute(java.sql.Connection arg0){
+									try {
+										Transaction txn = auditsess.beginTransaction();
+										auditsess.update(job);
+										txn.commit();
+									} catch (Exception e) {
+										e.printStackTrace();
+									}							
+								}
+							}
+							);
+
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					auditsess.close();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
 				if (conn.isClosed()){
 					conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass);
 				}
@@ -272,9 +295,7 @@ public class ReportProcessorWP  extends HttpServlet{
 				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-			} finally {
-				auditsess.close();
-			}
+			}			
 		}
 	}
 
@@ -285,29 +306,29 @@ public class ReportProcessorWP  extends HttpServlet{
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
 		String id = req.getParameter("id");
-		
+
 		ReportJob job = null;
-		
+
 		ByteArrayOutputStream bs = new ByteArrayOutputStream();
-				
+
 		final Session auditsess = getAuditSession();
-		
+
 		try {
-			
+
 			job = (ReportJob) auditsess.createCriteria(ReportJob.class)
 					.add(Restrictions.eq("id",Long.parseLong(id)))
 					.add(Restrictions.eq("siteKey",siteKey))
 					.add(Restrictions.eq("userEmail",userEmail))
 					.add(Restrictions.eq("userLogin",userLogin))
 					.uniqueResult();
-						
+
 			ByteArrayInputStream stream = new ByteArrayInputStream(job.reportResult);
 			int a1 = stream.read();
 			while (a1 >= 0){
 				bs.write((char)a1);
 				a1 = stream.read();
 			}
-		
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -330,15 +351,15 @@ public class ReportProcessorWP  extends HttpServlet{
 		String userEmail = req.getParameter("userEmail");
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
-		
+
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-		
+
 		List<ReportJob> job = null;
-						
+
 		Session auditsess = getAuditSession();
-		
+
 		try {
-			
+
 			job =  auditsess.createCriteria(ReportJob.class)
 					.add(Restrictions.eq("siteKey",siteKey))
 					.add(Restrictions.eq("userEmail",userEmail))
@@ -350,15 +371,39 @@ public class ReportProcessorWP  extends HttpServlet{
 		} finally {
 			auditsess.close();
 		}
-		
+
 		String callback= req.getParameter("callback");
 		String json = gson.toJson(job);
 		String res = callback+"("+json+")";
-		
-		   response.setContentType("text/javascript");
-		   PrintWriter out = response.getWriter();
-		   out.println(res);
-		
+
+		response.setContentType("text/javascript");
+		PrintWriter out = response.getWriter();
+		out.println(res);
+
+	}
+	@SuppressWarnings("unchecked")
+	public void getAvailableReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		List<AvailableReport> reports = null;					
+		Session auditsess = getAuditSession();
+
+		try {
+			reports =  auditsess.createCriteria(AvailableReport.class).list();		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			auditsess.close();
+		}
+
+		String callback= req.getParameter("callback");
+		String json = gson.toJson(reports);
+		String res = callback+"("+json+")";
+
+		response.setContentType("text/javascript");
+		PrintWriter out = response.getWriter();
+		out.println(res);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -375,11 +420,11 @@ public class ReportProcessorWP  extends HttpServlet{
 			try {
 				configProp.load(in);
 				configProp.put("REPORT_PATH", sc.getServletContext().getRealPath("/reports").replace("\\", "/")+"\\");
-				
-				Gson gson = new Gson();
-				reports = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTS"), HashMap.class);
-				reportnames = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTNAMES"), HashMap.class);
-
+				//				
+				//				Gson gson = new Gson();
+				//				reports = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTS"), HashMap.class);
+				//				reportnames = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTNAMES"), HashMap.class);
+				//
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -399,43 +444,81 @@ public class ReportProcessorWP  extends HttpServlet{
 		hostDriverClass = props.getProperty("HOSTDRIVERCLASS");
 
 		repConfig = new Configuration()
-		.setProperty("hibernate.cache.use_second_level_cache",	"false")
-		.setProperty("hibernate.dialect", hibernateDialect)
-		.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
-		.addAnnotatedClass(AuditItem.class)
-		.addAnnotatedClass(Audit.class)
-		.addAnnotatedClass(Category.class)
-		.addAnnotatedClass(Comment.class)
-		.addAnnotatedClass(Incident.class)
-		.addAnnotatedClass(Matrix.class)
-		.addAnnotatedClass(MitPlan.class)
-		.addAnnotatedClass(Mitigation.class)
-		.addAnnotatedClass(Response.class)
-		.addAnnotatedClass(Objective.class)
-		.addAnnotatedClass(Control.class)
-		.addAnnotatedClass(Control.class)
-		.addAnnotatedClass(Risk.class)
-		.addAnnotatedClass(Project.class)
-		.addAnnotatedClass(ReviewRiskComment.class)
-		.addAnnotatedClass(Review.class)
-		.addAnnotatedClass(RespPlan.class)
-		.addAnnotatedClass(User.class)
-		.addAnnotatedClass(QRMImport.class);
+				.setProperty("hibernate.cache.use_second_level_cache",	"false")
+				.setProperty("hibernate.dialect", hibernateDialect)
+				.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
+				.addAnnotatedClass(AuditItem.class)
+				.addAnnotatedClass(Audit.class)
+				.addAnnotatedClass(Category.class)
+				.addAnnotatedClass(Comment.class)
+				.addAnnotatedClass(Incident.class)
+				.addAnnotatedClass(Matrix.class)
+				.addAnnotatedClass(MitPlan.class)
+				.addAnnotatedClass(Mitigation.class)
+				.addAnnotatedClass(Response.class)
+				.addAnnotatedClass(Objective.class)
+				.addAnnotatedClass(Control.class)
+				.addAnnotatedClass(Control.class)
+				.addAnnotatedClass(Risk.class)
+				.addAnnotatedClass(Project.class)
+				.addAnnotatedClass(ReviewRiskComment.class)
+				.addAnnotatedClass(Review.class)
+				.addAnnotatedClass(RespPlan.class)
+				.addAnnotatedClass(User.class)
+				.addAnnotatedClass(QRMImport.class);
 
 		auditConfig = new Configuration()
-		.setProperty("hibernate.connection.driver_class",hostDriverClass)
-		.setProperty("hibernate.hbm2ddl.auto", "update")
-		.setProperty("hibernate.connection.url",hostURLReportAudit)
-		.setProperty("hibernate.connection.username",hostUser)
-		.setProperty("hibernate.connection.password",hostPass)
-		.setProperty("hibernate.dialect", hibernateDialect)
-		.setProperty("hibernate.show_sql", "true")
-		.addAnnotatedClass(ReportJob.class);
-		
+				.setProperty("hibernate.connection.driver_class",hostDriverClass)
+				.setProperty("hibernate.hbm2ddl.auto", "update")
+				.setProperty("hibernate.connection.url",hostURLReportAudit)
+				.setProperty("hibernate.connection.username",hostUser)
+				.setProperty("hibernate.connection.password",hostPass)
+				.setProperty("hibernate.dialect", hibernateDialect)
+				.setProperty("hibernate.show_sql", "true")
+				.addAnnotatedClass(ReportJob.class)
+				.addAnnotatedClass(AvailableReport.class);
 
+		List<AvailableReport> reports = null;					
+		Session auditsess = getAuditSession();
 
+		try {
+			reports =  auditsess.createCriteria(AvailableReport.class).list();		
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			auditsess.close();
+		}
+
+		if (reports.isEmpty()){
+			initReports();
+		}
 	}
 
+	private void initReports() {
+
+		Gson gson = new Gson();
+
+		final ReportSet reports = gson.fromJson(configProp.getProperty("REPORTS"), ReportSet.class);		
+		final Session auditsess = getAuditSession();
+
+		auditsess.doWork(
+				new Work() {
+					@Override
+					public void execute(java.sql.Connection arg0){
+						try {
+							Transaction txn = auditsess.beginTransaction();
+							for (AvailableReport report:reports.reports){
+								auditsess.saveOrUpdate(report);	
+							}
+							txn.commit();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}							
+					}
+				}
+				);
+
+	}
 	private Session getSession(){
 		StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
 		serviceRegistryBuilder.applySettings(repConfig.getProperties());
@@ -443,7 +526,7 @@ public class ReportProcessorWP  extends HttpServlet{
 		SessionFactory sf = repConfig.buildSessionFactory(serviceRegistry);
 		return sf.openSession();
 	}	
-	
+
 	private Session getAuditSession(){
 		StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
 		serviceRegistryBuilder.applySettings(auditConfig.getProperties());
