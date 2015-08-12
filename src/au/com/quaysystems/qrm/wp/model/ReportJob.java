@@ -33,6 +33,7 @@ public class ReportJob {
 	public Date completedDate;
 	@Expose
 	public Boolean completed = false;
+	public Boolean showUser = true;
 	public String reportName;
 	public String reportID;
 	@Lob

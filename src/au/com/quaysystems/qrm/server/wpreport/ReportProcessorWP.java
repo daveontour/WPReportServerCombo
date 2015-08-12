@@ -34,13 +34,11 @@ import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
 import org.hibernate.service.ServiceRegistry;
@@ -54,6 +52,7 @@ import au.com.quaysystems.qrm.wp.model.Audit;
 import au.com.quaysystems.qrm.wp.model.AuditItem;
 import au.com.quaysystems.qrm.wp.model.AvailableReport;
 import au.com.quaysystems.qrm.wp.model.Category;
+import au.com.quaysystems.qrm.wp.model.ClientSites;
 import au.com.quaysystems.qrm.wp.model.Comment;
 import au.com.quaysystems.qrm.wp.model.Control;
 import au.com.quaysystems.qrm.wp.model.ReportJob;
@@ -84,15 +83,17 @@ public class ReportProcessorWP  extends HttpServlet{
 	private String hostUser;
 	private String hostPass;
 	private String hibernateDialect;
-	static public Connection conn;
 	private String hostDriverClass;
 	private String hostURLReportAudit;
+	private String hostURLAdmin;
+	private Configuration adminConfig;
+	private SessionFactory sfAdmin;
+	private SessionFactory sfAudit;
+	private SessionFactory sfReport;
 
-	@SuppressWarnings("unchecked")
 	public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
-		HashMap<Long, AvailableReport> reports = new HashMap<Long, AvailableReport>();
-
+		
 		String action = req.getParameter("action");
 
 		if (action.equalsIgnoreCase("execute_report")){
@@ -111,28 +112,33 @@ public class ReportProcessorWP  extends HttpServlet{
 			getAvailableReports(req, response);
 			return;
 		}
+		if (action.equalsIgnoreCase("remove_report")){
+			removeReport(req, response);
+			return;
+		}
 	}
 	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
+		
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>(); 
 		SecureRandom random = new SecureRandom();
 		String dbname = new BigInteger(130, random).toString(32);
 		String reportData = req.getParameter("reportData");
 		String reportID = req.getParameter("reportID");
+		
+		boolean registeredSite;
 
 
 		try {
-			try {
-				conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass);
+			try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
+				createDatabase(conn,dbname);
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return;
 			}
 
-			createDatabase(conn,dbname);
-
 			final Session auditsess = getAuditSession();
-			final Session sess = getSession();
+			final Session sess = getSession(hostURLRoot+"/"+dbname);
 			final ReportJob job = new ReportJob();
 
 			AvailableReport report = (AvailableReport) auditsess.get(AvailableReport.class, Long.parseLong(reportID));
@@ -172,6 +178,8 @@ public class ReportProcessorWP  extends HttpServlet{
 				job.submittedDate = new Date();
 				job.ip = ipAddress;
 				job.reportTitle = report.title;
+				
+				registeredSite = checkSiteKey(job.siteKey, job.siteID);
 
 
 				boolean prepareMatrix = false;
@@ -183,35 +191,14 @@ public class ReportProcessorWP  extends HttpServlet{
 				imp.normalise(prepareMatrix);
 
 
-				sess.doWork(
-						new Work() {
-							@Override
-							public void execute(java.sql.Connection arg0){
-								try {
-									Transaction txn = sess.beginTransaction();
-									sess.save(imp);
-									txn.commit();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}							
-							}
-						}
-						);
+				Transaction txn = sess.beginTransaction();
+				sess.save(imp);
+				txn.commit();
+				
+				Transaction txn2 = auditsess.beginTransaction();
+				auditsess.save(job);
+				txn2.commit();
 
-				auditsess.doWork(
-						new Work() {
-							@Override
-							public void execute(java.sql.Connection arg0){
-								try {
-									Transaction txn = auditsess.beginTransaction();
-									auditsess.save(job);
-									txn.commit();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}							
-							}
-						}
-						);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -219,7 +206,7 @@ public class ReportProcessorWP  extends HttpServlet{
 			}
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-			try {			
+			try (Connection conn = DriverManager.getConnection(hostURLRoot+"/"+dbname,hostUser,hostPass)){			
 				response.setHeader("Content-Disposition", "attachment; filename=QRMReport.pdf");
 				response.setContentType("application/pdf");
 
@@ -259,22 +246,10 @@ public class ReportProcessorWP  extends HttpServlet{
 
 					job.completed =true;
 					job.completedDate = new Date();
-
-					auditsess.doWork(
-							new Work() {
-								@Override
-								public void execute(java.sql.Connection arg0){
-									try {
-										Transaction txn = auditsess.beginTransaction();
-										auditsess.update(job);
-										txn.commit();
-									} catch (Exception e) {
-										e.printStackTrace();
-									}							
-								}
-							}
-							);
-
+					
+					Transaction txn = auditsess.beginTransaction();
+					auditsess.update(job);
+					txn.commit();
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -285,15 +260,11 @@ public class ReportProcessorWP  extends HttpServlet{
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (conn.isClosed()){
-					conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass);
-				}
+			try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
 				Statement stmt = conn.createStatement();
 				stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
 				stmt.executeBatch();
-				conn.close();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}			
 		}
@@ -345,12 +316,54 @@ public class ReportProcessorWP  extends HttpServlet{
 			auditsess.close();
 		}
 	}
+	
+	public void removeReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+
+
+		String userEmail = req.getParameter("userEmail");
+		String userLogin = req.getParameter("userLogin");
+		String siteKey = req.getParameter("siteKey");
+		String id = req.getParameter("id");
+
+		ReportJob job = null;
+
+		final Session auditsess = getAuditSession();
+
+		try {
+
+			Transaction txn = auditsess.beginTransaction();
+			job = (ReportJob) auditsess.createCriteria(ReportJob.class)
+					.add(Restrictions.eq("id",Long.parseLong(id)))
+					.add(Restrictions.eq("siteKey",siteKey))
+					.add(Restrictions.eq("userEmail",userEmail))
+					.add(Restrictions.eq("userLogin",userLogin))
+					.uniqueResult();
+			job.showUser = false;
+			auditsess.update(job);
+			txn.commit();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		getUserReports( req, response);
+	}
 	@SuppressWarnings("unchecked")
 	public void getUserReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
 		String userEmail = req.getParameter("userEmail");
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
+		String siteID = req.getParameter("siteID");
+		String callback= req.getParameter("callback");
+
+		if (!checkSiteKey(siteKey, siteID)){
+			String res = callback+"({'error':'Your site has not been registered. You can generate reports but they will not be archived'})";
+			response.setContentType("text/javascript");
+			PrintWriter out = response.getWriter();
+			out.println(res);
+			return;
+		}
 
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
@@ -364,6 +377,7 @@ public class ReportProcessorWP  extends HttpServlet{
 					.add(Restrictions.eq("siteKey",siteKey))
 					.add(Restrictions.eq("userEmail",userEmail))
 					.add(Restrictions.eq("userLogin",userLogin))
+					.add(Restrictions.eq("showUser",true))
 					.list();		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -372,7 +386,7 @@ public class ReportProcessorWP  extends HttpServlet{
 			auditsess.close();
 		}
 
-		String callback= req.getParameter("callback");
+
 		String json = gson.toJson(job);
 		String res = callback+"("+json+")";
 
@@ -380,6 +394,16 @@ public class ReportProcessorWP  extends HttpServlet{
 		PrintWriter out = response.getWriter();
 		out.println(res);
 
+	}
+
+	private boolean checkSiteKey(String siteKey, String siteID){
+		Session sess = getAdminSession();
+		@SuppressWarnings("rawtypes")
+		List sites = sess.createCriteria(ClientSites.class)
+				.add(Restrictions.eq("siteKey",siteKey))
+				.add(Restrictions.eq("siteID",siteID))
+				.list();
+		return sites.size() == 1;
 	}
 	@SuppressWarnings("unchecked")
 	public void getAvailableReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -438,34 +462,48 @@ public class ReportProcessorWP  extends HttpServlet{
 
 		hostURLRoot = props.getProperty("HOSTURLROOT");
 		hostURLReportAudit = props.getProperty("HOSTURLREPORTAUDIT");
+		hostURLAdmin = props.getProperty("HOSTURLSITEADMIN");
 		hostUser = props.getProperty("HOSTUSER");
 		hostPass = props.getProperty("HOSTUSERPASS");
 		hibernateDialect = props.getProperty("HIBERNATEDIALECT");
 		hostDriverClass = props.getProperty("HOSTDRIVERCLASS");
 
-		repConfig = new Configuration()
-				.setProperty("hibernate.cache.use_second_level_cache",	"false")
+//		repConfig = new Configuration()
+//				.setProperty("hibernate.cache.use_second_level_cache",	"false")
+//				.setProperty("hibernate.dialect", hibernateDialect)
+////				.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
+//				.setProperty("hibernate.connection.url",hostURLRoot)
+//				.setProperty("hibernate.connection.username",hostUser)
+//				.setProperty("hibernate.connection.password",hostPass)
+//				.addAnnotatedClass(AuditItem.class)
+//				.addAnnotatedClass(Audit.class)
+//				.addAnnotatedClass(Category.class)
+//				.addAnnotatedClass(Comment.class)
+//				.addAnnotatedClass(Incident.class)
+//				.addAnnotatedClass(Matrix.class)
+//				.addAnnotatedClass(MitPlan.class)
+//				.addAnnotatedClass(Mitigation.class)
+//				.addAnnotatedClass(Response.class)
+//				.addAnnotatedClass(Objective.class)
+//				.addAnnotatedClass(Control.class)
+//				.addAnnotatedClass(Control.class)
+//				.addAnnotatedClass(Risk.class)
+//				.addAnnotatedClass(Project.class)
+//				.addAnnotatedClass(ReviewRiskComment.class)
+//				.addAnnotatedClass(Review.class)
+//				.addAnnotatedClass(RespPlan.class)
+//				.addAnnotatedClass(User.class)
+//				.addAnnotatedClass(QRMImport.class);
+
+		adminConfig = new Configuration()
+				.setProperty("hibernate.connection.driver_class",hostDriverClass)
+				.setProperty("hibernate.hbm2ddl.auto", "update")
+				.setProperty("hibernate.connection.url",hostURLAdmin)
+				.setProperty("hibernate.connection.username",hostUser)
+				.setProperty("hibernate.connection.password",hostPass)
 				.setProperty("hibernate.dialect", hibernateDialect)
-				.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
-				.addAnnotatedClass(AuditItem.class)
-				.addAnnotatedClass(Audit.class)
-				.addAnnotatedClass(Category.class)
-				.addAnnotatedClass(Comment.class)
-				.addAnnotatedClass(Incident.class)
-				.addAnnotatedClass(Matrix.class)
-				.addAnnotatedClass(MitPlan.class)
-				.addAnnotatedClass(Mitigation.class)
-				.addAnnotatedClass(Response.class)
-				.addAnnotatedClass(Objective.class)
-				.addAnnotatedClass(Control.class)
-				.addAnnotatedClass(Control.class)
-				.addAnnotatedClass(Risk.class)
-				.addAnnotatedClass(Project.class)
-				.addAnnotatedClass(ReviewRiskComment.class)
-				.addAnnotatedClass(Review.class)
-				.addAnnotatedClass(RespPlan.class)
-				.addAnnotatedClass(User.class)
-				.addAnnotatedClass(QRMImport.class);
+//				.setProperty("hibernate.show_sql", "true")
+				.addAnnotatedClass(ClientSites.class);
 
 		auditConfig = new Configuration()
 				.setProperty("hibernate.connection.driver_class",hostDriverClass)
@@ -474,7 +512,7 @@ public class ReportProcessorWP  extends HttpServlet{
 				.setProperty("hibernate.connection.username",hostUser)
 				.setProperty("hibernate.connection.password",hostPass)
 				.setProperty("hibernate.dialect", hibernateDialect)
-				.setProperty("hibernate.show_sql", "true")
+//				.setProperty("hibernate.show_sql", "true")
 				.addAnnotatedClass(ReportJob.class)
 				.addAnnotatedClass(AvailableReport.class);
 
@@ -491,6 +529,18 @@ public class ReportProcessorWP  extends HttpServlet{
 
 		if (reports.isEmpty()){
 			initReports();
+		}
+		
+		if (!checkSiteKey("bephra", "112358111931")){
+			Session s = getAdminSession();
+			ClientSites site = new ClientSites();
+			site.siteID = "112358111931";
+			site.siteKey = "bephra";
+			site.siteName = "Quay Systems Test";
+			Transaction txn = s.beginTransaction();
+			s.saveOrUpdate(site);
+			txn.commit();
+			s.close();
 		}
 	}
 
@@ -519,20 +569,61 @@ public class ReportProcessorWP  extends HttpServlet{
 				);
 
 	}
-	private Session getSession(){
-		StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-		serviceRegistryBuilder.applySettings(repConfig.getProperties());
-		ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-		SessionFactory sf = repConfig.buildSessionFactory(serviceRegistry);
-		return sf.openSession();
+	private Session getSession(String hostURL){
+		
+		repConfig = new Configuration()
+				.setProperty("hibernate.cache.use_second_level_cache",	"false")
+				.setProperty("hibernate.dialect", hibernateDialect)
+//				.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
+				.setProperty("hibernate.connection.url",hostURL)
+				.setProperty("hibernate.connection.username",hostUser)
+				.setProperty("hibernate.connection.password",hostPass)
+				.addAnnotatedClass(AuditItem.class)
+				.addAnnotatedClass(Audit.class)
+				.addAnnotatedClass(Category.class)
+				.addAnnotatedClass(Comment.class)
+				.addAnnotatedClass(Incident.class)
+				.addAnnotatedClass(Matrix.class)
+				.addAnnotatedClass(MitPlan.class)
+				.addAnnotatedClass(Mitigation.class)
+				.addAnnotatedClass(Response.class)
+				.addAnnotatedClass(Objective.class)
+				.addAnnotatedClass(Control.class)
+				.addAnnotatedClass(Control.class)
+				.addAnnotatedClass(Risk.class)
+				.addAnnotatedClass(Project.class)
+				.addAnnotatedClass(ReviewRiskComment.class)
+				.addAnnotatedClass(Review.class)
+				.addAnnotatedClass(RespPlan.class)
+				.addAnnotatedClass(User.class)
+				.addAnnotatedClass(QRMImport.class);
+		
+			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+			serviceRegistryBuilder.applySettings(repConfig.getProperties());
+			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+			sfReport = repConfig.buildSessionFactory(serviceRegistry);
+		
+		return sfReport.openSession();
 	}	
 
 	private Session getAuditSession(){
-		StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-		serviceRegistryBuilder.applySettings(auditConfig.getProperties());
-		ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-		SessionFactory sf = auditConfig.buildSessionFactory(serviceRegistry);
-		return sf.openSession();
+		if (sfAudit == null){
+			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+			serviceRegistryBuilder.applySettings(auditConfig.getProperties());
+			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+			sfAudit = auditConfig.buildSessionFactory(serviceRegistry);
+		}
+		return sfAudit.openSession();
+	}
+
+	private Session getAdminSession(){
+		if (sfAdmin == null){
+			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+			serviceRegistryBuilder.applySettings(adminConfig.getProperties());
+			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+			sfAdmin = adminConfig.buildSessionFactory(serviceRegistry);
+		}
+		return sfAdmin.openSession();
 	}
 
 	private void createDatabase(Connection conn, String dbname){

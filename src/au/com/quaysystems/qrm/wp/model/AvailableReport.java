@@ -25,5 +25,22 @@ public class AvailableReport {
 	@Expose
 	public boolean req_riskMatrix = false;
 	@Expose
-	public boolean req_relMatrix;
+	public boolean req_relMatrix = false;
+	@Expose
+	public boolean showRiskExplorer = false;
+	@Expose
+	public boolean showSingleRisk = false;
+	@Expose
+	public boolean showRank = false;
+	@Expose
+	public boolean showCalender = false;
+	@Expose
+	public boolean showRelMatrix = false;
+	@Expose
+	public boolean showReview = false;
+	@Expose
+	public boolean showIncident = false;
+	@Expose
+	public boolean showDashboard = false;
+
 }
