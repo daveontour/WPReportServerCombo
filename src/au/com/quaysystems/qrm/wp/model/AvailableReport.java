@@ -39,7 +39,11 @@ public class AvailableReport {
 	@Expose
 	public boolean showReview = false;
 	@Expose
+	public boolean showSingleReview = false;
+	@Expose
 	public boolean showIncident = false;
+	@Expose
+	public boolean showSingleIncident = false;
 	@Expose
 	public boolean showDashboard = false;
 
