@@ -2,6 +2,9 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
     <property name="units">in</property>
+    <method name="beforeFactory"><![CDATA[if (!params["useWatermark"].value){
+    reportContext.getDesignHandle().findMasterPage("QRM Report Master Page").setProperty("backgroundImage", "");
+}]]></method>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">96</property>
@@ -11,6 +14,20 @@
             <property name="namespace">QRM</property>
         </structure>
     </list-property>
+    <parameters>
+        <scalar-parameter name="useWatermark" id="8220">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+    </parameters>
     <data-sets>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RISKS" id="7672"
  extends="QRM.RISKS"/>
@@ -22,6 +39,8 @@
  extends="QRM.RISKCONTROLS"/>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RISKOBJECTIVES" id="7779"
  extends="QRM.RISKOBJECTIVES"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RISKREVIEWS" id="8225"
+ extends="QRM.RISKREVIEWS"/>
     </data-sets>
     <styles>
         <style name="report" id="4">
@@ -56,9 +75,13 @@
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">1pt</property>
         </style>
+        <style name="NewStyle" id="7910">
+            <property name="backgroundImage">WebContent/reports/pttU7.png</property>
+        </style>
     </styles>
     <page-setup>
         <simple-master-page name="QRM Report Master Page" id="7827" extends="QRM.QRM Report Master Page">
+            <property name="backgroundImage">WebContent/reports/watermark.png</property>
             <overridden-values>
                 <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
                 <ref-entry baseId="7883" id="7883"/>
@@ -575,7 +598,7 @@
                                 </cell>
                                 <cell id="7896">
                                     <text-data id="7897">
-                                        <property name="paddingRight">15pt</property>
+                                        <property name="paddingRight">30pt</property>
                                         <property name="textAlign">right</property>
                                         <expression name="valueExpr">(row["treated"])?"Treated":"Un Treated"</expression>
                                         <property name="contentType">html</property>
@@ -1162,11 +1185,14 @@
                     <cell id="7404">
                         <grid id="7406">
                             <property name="marginTop">10pt</property>
+                            <property name="width">6in</property>
                             <column id="7407">
                                 <property name="textAlign">center</property>
+                                <property name="width">2.9722222222222223in</property>
                             </column>
                             <column id="7408">
                                 <property name="textAlign">center</property>
+                                <property name="width">3.0277777777777777in</property>
                             </column>
                             <row id="7412">
                                 <cell id="7413">
@@ -2307,6 +2333,128 @@
                                     </cell>
                                 </row>
                             </footer>
+                        </table>
+                    </cell>
+                </row>
+                <row id="8221">
+                    <cell id="8222">
+                        <label id="8224">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginRight">5pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingRight">5pt</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Reviews:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="8223">
+                        <table id="8226">
+                            <property name="dataSet">RISKREVIEWS</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">id</property>
+                                    <text-property name="displayName">id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">actualdate</property>
+                                    <text-property name="displayName">actualdate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["actualdate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">description</property>
+                                    <text-property name="displayName">description</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">notes</property>
+                                    <text-property name="displayName">notes</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["notes"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">responsible</property>
+                                    <text-property name="displayName">responsible</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["responsible"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">reviewCode</property>
+                                    <text-property name="displayName">reviewCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["reviewCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">scheddate</property>
+                                    <text-property name="displayName">scheddate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["scheddate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">title</property>
+                                    <text-property name="displayName">title</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">risks</property>
+                                    <text-property name="displayName">risks</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["risks"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">reviewriskcomment_id</property>
+                                    <text-property name="displayName">reviewriskcomment_id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["reviewriskcomment_id"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment</property>
+                                    <text-property name="displayName">comment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["risks"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["id"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="8286"/>
+                            <column id="8290"/>
+                            <column id="8291"/>
+                            <detail>
+                                <row id="8250">
+                                    <cell id="8253">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <data id="8262">
+                                            <property name="resultSetColumn">reviewCode</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="8301">
+                                    <cell id="8302">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <text id="8305">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["comment"]</VALUE-OF>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </detail>
                         </table>
                     </cell>
                 </row>

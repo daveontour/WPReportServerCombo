@@ -126,6 +126,16 @@ public class ReportProcessorWP  extends HttpServlet{
 		String reportData = req.getParameter("reportData");
 		String reportID = req.getParameter("reportID");
 		
+		dbname = "qrm3";
+		
+		try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
+		Statement stmt = conn.createStatement();
+		stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
+		stmt.executeBatch();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+		
 		boolean registeredSite;
 
 
@@ -180,7 +190,7 @@ public class ReportProcessorWP  extends HttpServlet{
 				job.reportTitle = report.title;
 				
 				registeredSite = checkSiteKey(job.siteKey, job.siteID);
-
+				taskParamMap.put("useWatermark", !registeredSite);
 
 				boolean prepareMatrix = false;
 
@@ -260,13 +270,13 @@ public class ReportProcessorWP  extends HttpServlet{
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
-				Statement stmt = conn.createStatement();
-				stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
-				stmt.executeBatch();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
+//			try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
+//				Statement stmt = conn.createStatement();
+//				stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
+//				stmt.executeBatch();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}			
 		}
 	}
 
@@ -468,33 +478,6 @@ public class ReportProcessorWP  extends HttpServlet{
 		hibernateDialect = props.getProperty("HIBERNATEDIALECT");
 		hostDriverClass = props.getProperty("HOSTDRIVERCLASS");
 
-//		repConfig = new Configuration()
-//				.setProperty("hibernate.cache.use_second_level_cache",	"false")
-//				.setProperty("hibernate.dialect", hibernateDialect)
-////				.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
-//				.setProperty("hibernate.connection.url",hostURLRoot)
-//				.setProperty("hibernate.connection.username",hostUser)
-//				.setProperty("hibernate.connection.password",hostPass)
-//				.addAnnotatedClass(AuditItem.class)
-//				.addAnnotatedClass(Audit.class)
-//				.addAnnotatedClass(Category.class)
-//				.addAnnotatedClass(Comment.class)
-//				.addAnnotatedClass(Incident.class)
-//				.addAnnotatedClass(Matrix.class)
-//				.addAnnotatedClass(MitPlan.class)
-//				.addAnnotatedClass(Mitigation.class)
-//				.addAnnotatedClass(Response.class)
-//				.addAnnotatedClass(Objective.class)
-//				.addAnnotatedClass(Control.class)
-//				.addAnnotatedClass(Control.class)
-//				.addAnnotatedClass(Risk.class)
-//				.addAnnotatedClass(Project.class)
-//				.addAnnotatedClass(ReviewRiskComment.class)
-//				.addAnnotatedClass(Review.class)
-//				.addAnnotatedClass(RespPlan.class)
-//				.addAnnotatedClass(User.class)
-//				.addAnnotatedClass(QRMImport.class);
-
 		adminConfig = new Configuration()
 				.setProperty("hibernate.connection.driver_class",hostDriverClass)
 				.setProperty("hibernate.hbm2ddl.auto", "update")
@@ -502,7 +485,6 @@ public class ReportProcessorWP  extends HttpServlet{
 				.setProperty("hibernate.connection.username",hostUser)
 				.setProperty("hibernate.connection.password",hostPass)
 				.setProperty("hibernate.dialect", hibernateDialect)
-//				.setProperty("hibernate.show_sql", "true")
 				.addAnnotatedClass(ClientSites.class);
 
 		auditConfig = new Configuration()
@@ -704,8 +686,14 @@ public class ReportProcessorWP  extends HttpServlet{
 					+"left outer join audititem as a8 on a8.riskID = risk.id and a8.type = 'auditMitRev' "
 					+"left outer join audititem as a9 on a9.riskID = risk.id and a9.type = 'auditMitApp' "
 					+"left outer join project as p1 on p1.id = risk.projectID";
+			
+				String view2 = "create view riskreviews as SELECT  review.*,review_risk.risks,review_reviewriskcomment.reviewriskcomment_id,reviewriskcomment.comment FROM review "
+				+"join review_risk ON review_risk.review_id = review.id "
+				+"join review_reviewriskcomment ON review_reviewriskcomment.review_id = review.id "
+				+"left outer join reviewriskcomment ON reviewriskcomment.id = review_reviewriskcomment.reviewriskcomment_id AND reviewriskcomment.riskID = review_risk.risks";
 
-			stmt.addBatch(view);
+		stmt.addBatch(view);
+		stmt.addBatch(view2);
 			stmt.executeBatch();
 
 		} catch (Exception e1) {
