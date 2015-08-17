@@ -9,4 +9,17 @@
     <url-pattern>/report</url-pattern>
   </servlet-mapping>
   
+    <servlet>
+    <servlet-name>userMessageManager</servlet-name>
+    <servlet-class>au.com.quaysystems.qrm.server.wpreport.ServletUserMessageManager</servlet-class>
+    <async-supported>true</async-supported>
+  </servlet>
+    <servlet-mapping>
+    <servlet-name>userMessageManager</servlet-name>
+    <url-pattern>/reportMsg</url-pattern>
+  </servlet-mapping>
+  
+    <listener>
+	    <listener-class>au.com.quaysystems.qrm.server.ConcurrentManager</listener-class>
+    </listener>
 </web-app>

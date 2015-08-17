@@ -81,6 +81,8 @@
     </styles>
     <page-setup>
         <simple-master-page name="QRM Report Master Page" id="7827" extends="QRM.QRM Report Master Page">
+            <property name="leftMargin">10mm</property>
+            <property name="rightMargin">10mm</property>
             <property name="backgroundImage">WebContent/reports/watermark.png</property>
             <overridden-values>
                 <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
@@ -104,7 +106,7 @@
     <body>
         <table id="112">
             <property name="pageBreakBefore">always</property>
-            <property name="width">7.947916666666667in</property>
+            <property name="width">190mm</property>
             <property name="dataSet">RISKS</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -520,10 +522,10 @@
                 </structure>
             </list-property>
             <column id="141">
-                <property name="width">1.53125in</property>
+                <property name="width">36mm</property>
             </column>
             <column id="142">
-                <property name="width">6.416666666666667in</property>
+                <property name="width">154mm</property>
             </column>
             <detail>
                 <row id="7186">
@@ -1212,35 +1214,30 @@
                     </cell>
                 </row>
                 <row id="7781">
+                    <property name="pageBreakInside">avoid</property>
                     <cell id="7782">
                         <property name="colSpan">2</property>
                         <property name="rowSpan">1</property>
                         <grid id="3685">
                             <property name="marginTop">10pt</property>
-                            <property name="width">7.510416666666667in</property>
+                            <property name="width">6.902777777777778in</property>
                             <column id="3686">
-                                <property name="width">1.6041666666666667in</property>
+                                <property name="width">2.0416666666666665in</property>
                             </column>
                             <column id="3687">
-                                <property name="width">0.5in</property>
+                                <property name="width">0.5416666666666666in</property>
                             </column>
                             <column id="6302">
-                                <property name="width">1.6666666666666667in</property>
+                                <property name="width">1.875in</property>
                             </column>
                             <column id="6309">
-                                <property name="width">0.5208333333333334in</property>
+                                <property name="width">0.4861111111111111in</property>
                             </column>
                             <column id="7791">
-                                <property name="width">1.4166666666666667in</property>
+                                <property name="width">1.5in</property>
                             </column>
                             <column id="7799">
-                                <property name="width">0.4583333333333333in</property>
-                            </column>
-                            <column id="7807">
-                                <property name="width">0.90625in</property>
-                            </column>
-                            <column id="7815">
-                                <property name="width">0.4375in</property>
+                                <property name="width">0.4305555555555556in</property>
                             </column>
                             <row id="7816">
                                 <cell id="7817">
@@ -1253,11 +1250,12 @@
                                         <property name="marginTop">5pt</property>
                                         <property name="marginRight">5pt</property>
                                         <property name="paddingTop">1pt</property>
-                                        <text-property name="text">General Areas of Impact:</text-property>
+                                        <property name="textAlign">center</property>
+                                        <text-property name="text">General Areas of Impact</text-property>
                                     </label>
                                 </cell>
                                 <cell id="7821">
-                                    <property name="colSpan">4</property>
+                                    <property name="colSpan">2</property>
                                     <property name="rowSpan">1</property>
                                     <property name="paddingLeft">10pt</property>
                                     <property name="verticalAlign">top</property>
@@ -1268,7 +1266,8 @@
                                         <property name="marginTop">5pt</property>
                                         <property name="marginRight">5pt</property>
                                         <property name="paddingTop">1pt</property>
-                                        <text-property name="text">Treatment Strategy:</text-property>
+                                        <property name="textAlign">center</property>
+                                        <text-property name="text">Treatment Strategy</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -1385,43 +1384,6 @@
                                         <text-property name="text">  -</text-property>
                                     </label>
                                 </cell>
-                                <cell id="7800">
-                                    <property name="paddingLeft">10pt</property>
-                                    <property name="verticalAlign">top</property>
-                                    <label id="4773">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">10pt</property>
-                                        <property name="paddingTop">1pt</property>
-                                        <property name="paddingRight">1pt</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Reduction:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="7808">
-                                    <property name="paddingLeft">10pt</property>
-                                    <property name="verticalAlign">top</property>
-                                    <image id="6496">
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">!row["treatMinimise"]</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">accept.png</property>
-                                    </image>
-                                    <label id="6545">
-                                        <property name="marginLeft">0pt</property>
-                                        <property name="textAlign">left</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["treatMinimise"]</expression>
-                                            </structure>
-                                        </list-property>
-                                        <text-property name="text">  -</text-property>
-                                    </label>
-                                </cell>
                             </row>
                             <row id="3699">
                                 <cell id="3700">
@@ -1528,41 +1490,6 @@
                                         <text-property name="text">  -</text-property>
                                     </label>
                                 </cell>
-                                <cell id="7801">
-                                    <property name="paddingLeft">10pt</property>
-                                    <label id="4774">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">10pt</property>
-                                        <property name="paddingTop">1pt</property>
-                                        <property name="paddingRight">1pt</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Transfer:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="7809">
-                                    <property name="paddingLeft">10pt</property>
-                                    <image id="6497">
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">!row["treatTransfer"]</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">accept.png</property>
-                                    </image>
-                                    <label id="6546">
-                                        <property name="marginLeft">0pt</property>
-                                        <property name="textAlign">left</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["treatTransfer"]</expression>
-                                            </structure>
-                                        </list-property>
-                                        <text-property name="text">  -</text-property>
-                                    </label>
-                                </cell>
                             </row>
                             <row id="3712">
                                 <cell id="3713">
@@ -1636,15 +1563,87 @@
                                 </cell>
                                 <cell id="7786">
                                     <property name="paddingLeft">10pt</property>
+                                    <label id="4773">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">10pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">Reduction:</text-property>
+                                    </label>
                                 </cell>
                                 <cell id="7794">
                                     <property name="paddingLeft">10pt</property>
+                                    <image id="6496">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">!row["treatMinimise"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="6545">
+                                        <property name="marginLeft">0pt</property>
+                                        <property name="textAlign">left</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["treatMinimise"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">  -</text-property>
+                                    </label>
                                 </cell>
-                                <cell id="7802">
+                            </row>
+                            <row id="8318">
+                                <cell id="8319"/>
+                                <cell id="8320">
+                                    <property name="paddingLeft">10pt</property>
+                                    <property name="textAlign">left</property>
+                                </cell>
+                                <cell id="8321">
                                     <property name="paddingLeft">10pt</property>
                                 </cell>
-                                <cell id="7810">
+                                <cell id="8322">
                                     <property name="paddingLeft">10pt</property>
+                                    <property name="textAlign">left</property>
+                                </cell>
+                                <cell id="8323">
+                                    <property name="paddingLeft">10pt</property>
+                                    <label id="4774">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">10pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">Transfer:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="8324">
+                                    <property name="paddingLeft">10pt</property>
+                                    <image id="6497">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">!row["treatTransfer"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="6546">
+                                        <property name="marginLeft">0pt</property>
+                                        <property name="textAlign">left</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["treatTransfer"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">  -</text-property>
+                                    </label>
                                 </cell>
                             </row>
                         </grid>
@@ -1710,7 +1709,7 @@
                     </cell>
                     <cell id="7740">
                         <table id="6713">
-                            <property name="width">6.354166666666667in</property>
+                            <property name="width">6.041666666666667in</property>
                             <property name="dataSet">MITIGATIONPLAN</property>
                             <list-property name="boundDataColumns">
                                 <structure>
@@ -1794,13 +1793,13 @@
                                 <property name="width">3.09375in</property>
                             </column>
                             <column id="6793">
-                                <property name="width">1.3645833333333333in</property>
+                                <property name="width">1.0972222222222223in</property>
                             </column>
                             <column id="6794">
-                                <property name="width">1.0833333333333333in</property>
+                                <property name="width">0.875in</property>
                             </column>
                             <column id="6795">
-                                <property name="width">0.8125in</property>
+                                <property name="width">0.9861111111111112in</property>
                             </column>
                             <header>
                                 <row id="6714">
@@ -2197,7 +2196,7 @@
                     <cell id="7766">
                         <table id="7256">
                             <property name="marginTop">10pt</property>
-                            <property name="width">6.354166666666667in</property>
+                            <property name="width">6.027777777777778in</property>
                             <property name="dataSet">RISKCONTROLS</property>
                             <list-property name="boundDataColumns">
                                 <structure>
@@ -2242,15 +2241,15 @@
                                 </structure>
                             </list-property>
                             <column id="7296">
-                                <property name="width">3.375in</property>
+                                <property name="width">3.111111111111111in</property>
                             </column>
                             <column id="7299">
                                 <property name="textAlign">center</property>
-                                <property name="width">1.4791666666666667in</property>
+                                <property name="width">1.3888888888888888in</property>
                             </column>
                             <column id="7301">
                                 <property name="textAlign">center</property>
-                                <property name="width">1.5in</property>
+                                <property name="width">1.5277777777777777in</property>
                             </column>
                             <header>
                                 <row id="7257">
@@ -2342,7 +2341,7 @@
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontSize">9pt</property>
                             <property name="fontWeight">bold</property>
-                            <property name="marginTop">0pt</property>
+                            <property name="marginTop">10pt</property>
                             <property name="marginRight">5pt</property>
                             <property name="paddingTop">1pt</property>
                             <property name="paddingRight">5pt</property>
@@ -2352,6 +2351,7 @@
                     </cell>
                     <cell id="8223">
                         <table id="8226">
+                            <property name="width">100%</property>
                             <property name="dataSet">RISKREVIEWS</property>
                             <list-property name="boundDataColumns">
                                 <structure>
@@ -2364,7 +2364,8 @@
                                     <property name="name">actualdate</property>
                                     <text-property name="displayName">actualdate</text-property>
                                     <expression name="expression" type="javascript">dataSetRow["actualdate"]</expression>
-                                    <property name="dataType">string</property>
+                                    <property name="dataType">date-time</property>
+                                    <property name="allowExport">true</property>
                                 </structure>
                                 <structure>
                                     <property name="name">description</property>
@@ -2394,7 +2395,8 @@
                                     <property name="name">scheddate</property>
                                     <text-property name="displayName">scheddate</text-property>
                                     <expression name="expression" type="javascript">dataSetRow["scheddate"]</expression>
-                                    <property name="dataType">string</property>
+                                    <property name="dataType">date-time</property>
+                                    <property name="allowExport">true</property>
                                 </structure>
                                 <structure>
                                     <property name="name">title</property>
@@ -2432,23 +2434,67 @@
                                 </structure>
                             </list-property>
                             <column id="8286"/>
+                            <column id="8314"/>
                             <column id="8290"/>
+                            <column id="8317"/>
                             <column id="8291"/>
                             <detail>
                                 <row id="8250">
                                     <cell id="8253">
-                                        <property name="colSpan">3</property>
+                                        <property name="colSpan">1</property>
                                         <property name="rowSpan">1</property>
                                         <data id="8262">
+                                            <property name="marginTop">10pt</property>
                                             <property name="resultSetColumn">reviewCode</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="8312">
+                                        <text id="8310">
+                                            <property name="marginTop">10pt</property>
+                                            <property name="marginRight">5pt</property>
+                                            <property name="textAlign">right</property>
+                                            <property name="contentType">auto</property>
+                                            <text-property name="content"><![CDATA[Scheduled Date:]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="8306">
+                                        <data id="8308">
+                                            <property name="marginTop">10pt</property>
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Long Date</property>
+                                                <property name="pattern">Long Date</property>
+                                            </structure>
+                                            <property name="textAlign">left</property>
+                                            <property name="resultSetColumn">scheddate</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="8315">
+                                        <text id="8311">
+                                            <property name="marginTop">10pt</property>
+                                            <property name="marginRight">5pt</property>
+                                            <property name="textAlign">right</property>
+                                            <property name="contentType">auto</property>
+                                            <text-property name="content"><![CDATA[Actual Date:]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="8307">
+                                        <data id="8309">
+                                            <property name="marginTop">10pt</property>
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Long Date</property>
+                                                <property name="pattern">Long Date</property>
+                                            </structure>
+                                            <property name="textAlign">left</property>
+                                            <property name="resultSetColumn">actualdate</property>
                                         </data>
                                     </cell>
                                 </row>
                                 <row id="8301">
                                     <cell id="8302">
-                                        <property name="colSpan">3</property>
+                                        <property name="colSpan">5</property>
                                         <property name="rowSpan">1</property>
                                         <text id="8305">
+                                            <property name="marginTop">-10pt</property>
                                             <property name="contentType">html</property>
                                             <text-property name="content"><![CDATA[<VALUE-OF format="html">row["comment"]</VALUE-OF>]]></text-property>
                                         </text>

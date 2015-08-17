@@ -1,32 +1,21 @@
-package au.com.quaysystems.qrm.server.wpreport;
+package au.com.quaysystems.qrm.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 import org.eclipse.birt.report.engine.api.IPDFRenderOption;
@@ -46,7 +35,9 @@ import org.hibernate.service.ServiceRegistry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import au.com.quaysystems.qrm.server.BirtEngineFactory;
+import au.com.quaysystems.qrm.server.wpreport.DoubleDeserializer;
+import au.com.quaysystems.qrm.server.wpreport.IntegerDeserializer;
+import au.com.quaysystems.qrm.server.wpreport.ServletUserMessageManager;
 import au.com.quaysystems.qrm.wp.QRMImport;
 import au.com.quaysystems.qrm.wp.model.Audit;
 import au.com.quaysystems.qrm.wp.model.AuditItem;
@@ -70,10 +61,7 @@ import au.com.quaysystems.qrm.wp.util.Mitigation;
 import au.com.quaysystems.qrm.wp.util.Objective;
 import au.com.quaysystems.qrm.wp.util.Project;
 
-@SuppressWarnings("serial")
-@WebServlet (value = "/QRMReportRequest", asyncSupported = false)
-public class ReportProcessorWP  extends HttpServlet{
-
+public class ReportProcessor {
 	private static Properties configProp = new Properties();
 	private IReportEngine engine;
 	private Configuration repConfig;
@@ -86,66 +74,45 @@ public class ReportProcessorWP  extends HttpServlet{
 	private String hostDriverClass;
 	private String hostURLReportAudit;
 	private String hostURLAdmin;
+	private String demoID;
+	private String demoKey;
+	private String testID;
+	private String testKey;
+	private String testName;
 	private Configuration adminConfig;
 	private SessionFactory sfAdmin;
 	private SessionFactory sfAudit;
 	private SessionFactory sfReport;
+	private Gson gson;
 
-	public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-
-		
-		String action = req.getParameter("action");
-
-		if (action.equalsIgnoreCase("execute_report")){
-			serviceReport(req, response);
-			return;
-		}
-		if (action.equalsIgnoreCase("get_report")){
-			getReport(req, response);
-			return;
-		}
-		if (action.equalsIgnoreCase("get_userreports")){
-			getUserReports(req, response);
-			return;
-		}
-		if (action.equalsIgnoreCase("get_availablereports")){
-			getAvailableReports(req, response);
-			return;
-		}
-		if (action.equalsIgnoreCase("remove_report")){
-			removeReport(req, response);
-			return;
-		}
+	public ReportProcessor(ServletContext sc) {
+		init(sc);
 	}
-	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+	
+	public void deliver(String reportData, String reportID, String ipAddress) {
 
 		
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>(); 
 		SecureRandom random = new SecureRandom();
 		String dbname = new BigInteger(130, random).toString(32);
-		String reportData = req.getParameter("reportData");
-		String reportID = req.getParameter("reportID");
+
+		final QRMImport imp = gson.fromJson(reportData, QRMImport.class);
 		
-		dbname = "qrm3";
+		try {
+			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 15000);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		boolean registeredSite = checkSiteKey(imp.siteKey, imp.siteID);
 		
 		try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
-		Statement stmt = conn.createStatement();
-		stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
-		stmt.executeBatch();
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-		
-		boolean registeredSite;
-
+			createDatabase(conn,dbname);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		try {
-			try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
-				createDatabase(conn,dbname);
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return;
-			}
 
 			final Session auditsess = getAuditSession();
 			final Session sess = getSession(hostURLRoot+"/"+dbname);
@@ -154,27 +121,15 @@ public class ReportProcessorWP  extends HttpServlet{
 			AvailableReport report = (AvailableReport) auditsess.get(AvailableReport.class, Long.parseLong(reportID));
 			String reportName = report.filename;
 
-			//Parse the data 
-
 			try {
 
-				GsonBuilder builder = new GsonBuilder();
-				builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
-				builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
-				Gson gson = builder.create();
-				final QRMImport imp = gson.fromJson(reportData, QRMImport.class);
-
+				taskParamMap.put("useWatermark", !registeredSite);
 				taskParamMap.put("userEmail", imp.userEmail);
 				taskParamMap.put("siteID", imp.siteID);
 				taskParamMap.put("siteKey", imp.siteKey);
 				taskParamMap.put("userDisplayName", imp.userDisplayName);
 				taskParamMap.put("siteName", imp.siteName);
 				taskParamMap.put("userLogin", imp.userLogin);
-
-				String ipAddress = req.getHeader("X-FORWARDED-FOR");  
-				if (ipAddress == null) {  
-					ipAddress = req.getRemoteAddr();  
-				}
 
 				job.completed = false;
 				job.siteID = imp.siteID;
@@ -188,9 +143,6 @@ public class ReportProcessorWP  extends HttpServlet{
 				job.submittedDate = new Date();
 				job.ip = ipAddress;
 				job.reportTitle = report.title;
-				
-				registeredSite = checkSiteKey(job.siteKey, job.siteID);
-				taskParamMap.put("useWatermark", !registeredSite);
 
 				boolean prepareMatrix = false;
 
@@ -200,11 +152,10 @@ public class ReportProcessorWP  extends HttpServlet{
 
 				imp.normalise(prepareMatrix);
 
-
 				Transaction txn = sess.beginTransaction();
 				sess.save(imp);
 				txn.commit();
-				
+
 				Transaction txn2 = auditsess.beginTransaction();
 				auditsess.save(job);
 				txn2.commit();
@@ -214,13 +165,10 @@ public class ReportProcessorWP  extends HttpServlet{
 				e.printStackTrace();
 				return;
 			}
+			
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 
 			try (Connection conn = DriverManager.getConnection(hostURLRoot+"/"+dbname,hostUser,hostPass)){			
-				response.setHeader("Content-Disposition", "attachment; filename=QRMReport.pdf");
-				response.setContentType("application/pdf");
-
-
 
 				IRenderOption options = new RenderOption();
 				options.setOutputFormat(HTMLRenderOption.OUTPUT_FORMAT_PDF);
@@ -246,223 +194,57 @@ public class ReportProcessorWP  extends HttpServlet{
 
 				job.reportResult = os.toByteArray();
 
-				os.writeTo(response.getOutputStream());
-
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
 			} finally {
+				
 				try {
 
 					job.completed =true;
 					job.completedDate = new Date();
-					
+
 					Transaction txn = auditsess.beginTransaction();
 					auditsess.update(job);
 					txn.commit();
+					
+					try {
+						ServletUserMessageManager.notifyUserReportReady(imp.userEmail, job.id);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}					
+
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					auditsess.close();
 				}
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-//			try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
-//				Statement stmt = conn.createStatement();
-//				stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
-//				stmt.executeBatch();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}			
-		}
-	}
-
-	public void getReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-
-
-		String userEmail = req.getParameter("userEmail");
-		String userLogin = req.getParameter("userLogin");
-		String siteKey = req.getParameter("siteKey");
-		String id = req.getParameter("id");
-
-		ReportJob job = null;
-
-		ByteArrayOutputStream bs = new ByteArrayOutputStream();
-
-		final Session auditsess = getAuditSession();
-
-		try {
-
-			job = (ReportJob) auditsess.createCriteria(ReportJob.class)
-					.add(Restrictions.eq("id",Long.parseLong(id)))
-					.add(Restrictions.eq("siteKey",siteKey))
-					.add(Restrictions.eq("userEmail",userEmail))
-					.add(Restrictions.eq("userLogin",userLogin))
-					.uniqueResult();
-
-			ByteArrayInputStream stream = new ByteArrayInputStream(job.reportResult);
-			int a1 = stream.read();
-			while (a1 >= 0){
-				bs.write((char)a1);
-				a1 = stream.read();
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try(Connection conn = DriverManager.getConnection(hostURLRoot,hostUser,hostPass)) {
+				Statement stmt = conn.createStatement();
+				stmt.addBatch("DROP DATABASE IF EXISTS `"+dbname+"`");
+				stmt.executeBatch();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 
-		try {			
-			response.setHeader("Content-Disposition", "attachment; filename=QRMReport.pdf");
-			response.setContentType("application/pdf");
-			bs.writeTo(response.getOutputStream());
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			bs.close();
-			auditsess.close();
-		}
 	}
 	
-	public void removeReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-
-
-		String userEmail = req.getParameter("userEmail");
-		String userLogin = req.getParameter("userLogin");
-		String siteKey = req.getParameter("siteKey");
-		String id = req.getParameter("id");
-
-		ReportJob job = null;
-
-		final Session auditsess = getAuditSession();
-
-		try {
-
-			Transaction txn = auditsess.beginTransaction();
-			job = (ReportJob) auditsess.createCriteria(ReportJob.class)
-					.add(Restrictions.eq("id",Long.parseLong(id)))
-					.add(Restrictions.eq("siteKey",siteKey))
-					.add(Restrictions.eq("userEmail",userEmail))
-					.add(Restrictions.eq("userLogin",userLogin))
-					.uniqueResult();
-			job.showUser = false;
-			auditsess.update(job);
-			txn.commit();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		getUserReports( req, response);
-	}
-	@SuppressWarnings("unchecked")
-	public void getUserReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-
-		String userEmail = req.getParameter("userEmail");
-		String userLogin = req.getParameter("userLogin");
-		String siteKey = req.getParameter("siteKey");
-		String siteID = req.getParameter("siteID");
-		String callback= req.getParameter("callback");
-
-		if (!checkSiteKey(siteKey, siteID)){
-			String res = callback+"({'error':'Your site has not been registered. You can generate reports but they will not be archived'})";
-			response.setContentType("text/javascript");
-			PrintWriter out = response.getWriter();
-			out.println(res);
-			return;
-		}
-
-		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-
-		List<ReportJob> job = null;
-
-		Session auditsess = getAuditSession();
-
-		try {
-
-			job =  auditsess.createCriteria(ReportJob.class)
-					.add(Restrictions.eq("siteKey",siteKey))
-					.add(Restrictions.eq("userEmail",userEmail))
-					.add(Restrictions.eq("userLogin",userLogin))
-					.add(Restrictions.eq("showUser",true))
-					.list();		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			auditsess.close();
-		}
-
-
-		String json = gson.toJson(job);
-		String res = callback+"("+json+")";
-
-		response.setContentType("text/javascript");
-		PrintWriter out = response.getWriter();
-		out.println(res);
-
-	}
-
-	private boolean checkSiteKey(String siteKey, String siteID){
-		Session sess = getAdminSession();
-		@SuppressWarnings("rawtypes")
-		List sites = sess.createCriteria(ClientSites.class)
-				.add(Restrictions.eq("siteKey",siteKey))
-				.add(Restrictions.eq("siteID",siteID))
-				.list();
-		return sites.size() == 1;
-	}
-	@SuppressWarnings("unchecked")
-	public void getAvailableReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-
-		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-		List<AvailableReport> reports = null;					
-		Session auditsess = getAuditSession();
-
-		try {
-			reports =  auditsess.createCriteria(AvailableReport.class).list();		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			auditsess.close();
-		}
-
-		String callback= req.getParameter("callback");
-		String json = gson.toJson(reports);
-		String res = callback+"("+json+")";
-
-		response.setContentType("text/javascript");
-		PrintWriter out = response.getWriter();
-		out.println(res);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void init(final ServletConfig sc) {
-		try {
-			super.init(sc);
-		} catch (ServletException e) {
-			e.printStackTrace();
-		}
-
-		InputStream in;
-		try {
-			in = new FileInputStream(sc.getServletContext().getRealPath("/WPQRM.properties"));
+	private void init(ServletContext sc){
+		try ( InputStream in = new FileInputStream(sc.getRealPath("/WPQRM.properties"))){			
 			try {
 				configProp.load(in);
-				configProp.put("REPORT_PATH", sc.getServletContext().getRealPath("/reports").replace("\\", "/")+"\\");
-				//				
-				//				Gson gson = new Gson();
-				//				reports = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTS"), HashMap.class);
-				//				reportnames = (HashMap<String,String>)gson.fromJson(configProp.getProperty("REPORTNAMES"), HashMap.class);
-				//
+				configProp.put("REPORT_PATH", sc.getRealPath("/reports").replace("\\", "/")+"\\");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (FileNotFoundException e) {
+		} catch ( Exception e) {
 			e.printStackTrace();
 		}
 
@@ -477,6 +259,11 @@ public class ReportProcessorWP  extends HttpServlet{
 		hostPass = props.getProperty("HOSTUSERPASS");
 		hibernateDialect = props.getProperty("HIBERNATEDIALECT");
 		hostDriverClass = props.getProperty("HOSTDRIVERCLASS");
+		demoID = props.getProperty("DEMOID");
+		demoKey = props.getProperty("DEMOKEY");
+		testID = props.getProperty("TESTID");
+		testKey = props.getProperty("TESTKEY");
+		testName = props.getProperty("TESTNAME");
 
 		adminConfig = new Configuration()
 				.setProperty("hibernate.connection.driver_class",hostDriverClass)
@@ -494,7 +281,6 @@ public class ReportProcessorWP  extends HttpServlet{
 				.setProperty("hibernate.connection.username",hostUser)
 				.setProperty("hibernate.connection.password",hostPass)
 				.setProperty("hibernate.dialect", hibernateDialect)
-//				.setProperty("hibernate.show_sql", "true")
 				.addAnnotatedClass(ReportJob.class)
 				.addAnnotatedClass(AvailableReport.class);
 
@@ -502,61 +288,59 @@ public class ReportProcessorWP  extends HttpServlet{
 		Session auditsess = getAuditSession();
 
 		try {
-			reports =  auditsess.createCriteria(AvailableReport.class).list();		
+			reports =  auditsess.createCriteria(AvailableReport.class).list();
+			if (reports.isEmpty()){
+				initReports();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			auditsess.close();
 		}
 
-		if (reports.isEmpty()){
-			initReports();
-		}
-		
-		if (!checkSiteKey("bephra", "112358111931")){
+		if (!checkSiteKey(testKey, testID)){
 			Session s = getAdminSession();
 			ClientSites site = new ClientSites();
-			site.siteID = "112358111931";
-			site.siteKey = "bephra";
-			site.siteName = "Quay Systems Test";
+			site.siteID = testID;
+			site.siteKey = testKey;
+			site.siteName = testName;
 			Transaction txn = s.beginTransaction();
 			s.saveOrUpdate(site);
 			txn.commit();
 			s.close();
 		}
+		
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
+		builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
+		gson = builder.create();
+
+	}
+	
+	private Session getAuditSession(){
+		if (sfAudit == null){
+			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+			serviceRegistryBuilder.applySettings(auditConfig.getProperties());
+			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+			sfAudit = auditConfig.buildSessionFactory(serviceRegistry);
+		}
+		return sfAudit.openSession();
 	}
 
-	private void initReports() {
-
-		Gson gson = new Gson();
-
-		final ReportSet reports = gson.fromJson(configProp.getProperty("REPORTS"), ReportSet.class);		
-		final Session auditsess = getAuditSession();
-
-		auditsess.doWork(
-				new Work() {
-					@Override
-					public void execute(java.sql.Connection arg0){
-						try {
-							Transaction txn = auditsess.beginTransaction();
-							for (AvailableReport report:reports.reports){
-								auditsess.saveOrUpdate(report);	
-							}
-							txn.commit();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}							
-					}
-				}
-				);
-
+	private Session getAdminSession(){
+		if (sfAdmin == null){
+			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+			serviceRegistryBuilder.applySettings(adminConfig.getProperties());
+			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+			sfAdmin = adminConfig.buildSessionFactory(serviceRegistry);
+		}
+		return sfAdmin.openSession();
 	}
 	private Session getSession(String hostURL){
-		
+
 		repConfig = new Configuration()
 				.setProperty("hibernate.cache.use_second_level_cache",	"false")
 				.setProperty("hibernate.dialect", hibernateDialect)
-//				.setProperty(Environment.CONNECTION_PROVIDER, "au.com.quaysystems.qrm.wp.MyConnectionProvider") //Hack so I can reuse a DB connection
 				.setProperty("hibernate.connection.url",hostURL)
 				.setProperty("hibernate.connection.username",hostUser)
 				.setProperty("hibernate.connection.password",hostPass)
@@ -579,34 +363,14 @@ public class ReportProcessorWP  extends HttpServlet{
 				.addAnnotatedClass(RespPlan.class)
 				.addAnnotatedClass(User.class)
 				.addAnnotatedClass(QRMImport.class);
-		
-			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-			serviceRegistryBuilder.applySettings(repConfig.getProperties());
-			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-			sfReport = repConfig.buildSessionFactory(serviceRegistry);
-		
+
+		StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+		serviceRegistryBuilder.applySettings(repConfig.getProperties());
+		ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+		sfReport = repConfig.buildSessionFactory(serviceRegistry);
+
 		return sfReport.openSession();
 	}	
-
-	private Session getAuditSession(){
-		if (sfAudit == null){
-			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-			serviceRegistryBuilder.applySettings(auditConfig.getProperties());
-			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-			sfAudit = auditConfig.buildSessionFactory(serviceRegistry);
-		}
-		return sfAudit.openSession();
-	}
-
-	private Session getAdminSession(){
-		if (sfAdmin == null){
-			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-			serviceRegistryBuilder.applySettings(adminConfig.getProperties());
-			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-			sfAdmin = adminConfig.buildSessionFactory(serviceRegistry);
-		}
-		return sfAdmin.openSession();
-	}
 
 	private void createDatabase(Connection conn, String dbname){
 		try {
@@ -645,7 +409,7 @@ public class ReportProcessorWP  extends HttpServlet{
 			stmt.addBatch("CREATE TABLE `response` (   `id` bigint(20) NOT NULL,   `respPlanSummary` text,   `respPlanSummaryUpdate` text,   PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch("CREATE TABLE `response_respstep` (   `response_id` bigint(20) NOT NULL,   `responsestep_id` bigint(20) NOT NULL,   `respPlan_ORDER` int(11) NOT NULL,   PRIMARY KEY (`response_id`,`respPlan_ORDER`),   UNIQUE KEY `UK_g6boraaa8bc5lyxp8u2gn038w` (`responsestep_id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch("CREATE TABLE `respplan` (   `id` bigint(20) NOT NULL,   `cost` double NOT NULL,   `description` text,   `person` int(11) NOT NULL,   PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
-			stmt.addBatch("CREATE TABLE `review` (   `id` bigint(20) NOT NULL,   `actualdate` varchar(255) DEFAULT NULL,   `description` text,   `notes` text,   `responsible` int(11) NOT NULL,   `reviewCode` varchar(255) DEFAULT NULL,   `scheddate` varchar(255) DEFAULT NULL,   `title` varchar(255) DEFAULT NULL,   PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
+			stmt.addBatch("CREATE TABLE `review` (   `id` bigint(20) NOT NULL,   `actualdate` varchar(255) DEFAULT NULL,   `description` text,   `notes` text, `complete` bit(1) NOT NULL,   `responsible` int(11) NOT NULL,   `reviewCode` varchar(255) DEFAULT NULL,   `scheddate` varchar(255) DEFAULT NULL,   `title` varchar(255) DEFAULT NULL,   PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch("CREATE TABLE `reviewriskcomment` (   `id` bigint(20) NOT NULL,   `comment` text,   `riskID` int(11) NOT NULL,   PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch("CREATE TABLE `review_reviewriskcomment` (   `review_id` bigint(20) NOT NULL,   `reviewriskcomment_id` bigint(20) NOT NULL,   `riskComments_ORDER` int(11) NOT NULL,   PRIMARY KEY (`review_id`,`riskComments_ORDER`),   UNIQUE KEY `UK_q16alistcugy482lwqr5e613j` (`reviewriskcomment_id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch("CREATE TABLE `review_risk` (   `review_id` bigint(20) NOT NULL,   `risks` int(11) DEFAULT NULL,   `risks_ORDER` int(11) NOT NULL,   PRIMARY KEY (`review_id`,`risks_ORDER`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
@@ -686,14 +450,14 @@ public class ReportProcessorWP  extends HttpServlet{
 					+"left outer join audititem as a8 on a8.riskID = risk.id and a8.type = 'auditMitRev' "
 					+"left outer join audititem as a9 on a9.riskID = risk.id and a9.type = 'auditMitApp' "
 					+"left outer join project as p1 on p1.id = risk.projectID";
-			
-				String view2 = "create view riskreviews as SELECT  review.*,review_risk.risks,review_reviewriskcomment.reviewriskcomment_id,reviewriskcomment.comment FROM review "
-				+"join review_risk ON review_risk.review_id = review.id "
-				+"join review_reviewriskcomment ON review_reviewriskcomment.review_id = review.id "
-				+"left outer join reviewriskcomment ON reviewriskcomment.id = review_reviewriskcomment.reviewriskcomment_id AND reviewriskcomment.riskID = review_risk.risks";
 
-		stmt.addBatch(view);
-		stmt.addBatch(view2);
+			String view2 = "create view riskreviews as SELECT  review.*,review_risk.risks,review_reviewriskcomment.reviewriskcomment_id,reviewriskcomment.comment FROM review "
+					+"join review_risk ON review_risk.review_id = review.id "
+					+"join review_reviewriskcomment ON review_reviewriskcomment.review_id = review.id "
+					+"left outer join reviewriskcomment ON reviewriskcomment.id = review_reviewriskcomment.reviewriskcomment_id AND reviewriskcomment.riskID = review_risk.risks";
+
+			stmt.addBatch(view);
+			stmt.addBatch(view2);
 			stmt.executeBatch();
 
 		} catch (Exception e1) {
@@ -701,8 +465,39 @@ public class ReportProcessorWP  extends HttpServlet{
 		} 
 	}	
 
-	public String readFile(String path, Charset encoding) 	throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
+	private boolean checkSiteKey(String siteKey, String siteID){
+		Session sess = getAdminSession();
+		@SuppressWarnings("rawtypes")
+		List sites = sess.createCriteria(ClientSites.class)
+		.add(Restrictions.eq("siteKey",siteKey))
+		.add(Restrictions.eq("siteID",siteID))
+		.list();
+		return sites.size() == 1;
+	}
+
+	private void initReports() {
+
+		Gson gson = new Gson();
+
+		final ReportSet reports = gson.fromJson(configProp.getProperty("REPORTS"), ReportSet.class);		
+		final Session auditsess = getAuditSession();
+
+		auditsess.doWork(
+				new Work() {
+					@Override
+					public void execute(java.sql.Connection arg0){
+						try {
+							Transaction txn = auditsess.beginTransaction();
+							for (AvailableReport report:reports.reports){
+								auditsess.saveOrUpdate(report);	
+							}
+							txn.commit();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}							
+					}
+				}
+				);
+
 	}
 }

@@ -26,6 +26,7 @@ public class Review {
     int responsible;
 	@Column(columnDefinition="TEXT")
     String notes;
+	Boolean complete = false;
     @ElementCollection
     @CollectionTable(name="REVIEW_RISK", joinColumns=@JoinColumn(name="review_id"))
     @OrderColumn
