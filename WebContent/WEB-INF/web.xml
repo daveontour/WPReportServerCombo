@@ -2,7 +2,7 @@
 <web-app metadata-complete="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <servlet>
     <servlet-name>reportServlet</servlet-name>
-    <servlet-class>au.com.quaysystems.qrm.server.wpreport.ReportProcessorWP</servlet-class>
+    <servlet-class>au.com.quaysystems.qrm.server.ServletReportProcessor</servlet-class>
   </servlet>
     <servlet-mapping>
     <servlet-name>reportServlet</servlet-name>
@@ -11,7 +11,7 @@
   
     <servlet>
     <servlet-name>userMessageManager</servlet-name>
-    <servlet-class>au.com.quaysystems.qrm.server.wpreport.ServletUserMessageManager</servlet-class>
+    <servlet-class>au.com.quaysystems.qrm.server.ServletUserMessageManager</servlet-class>
     <async-supported>true</async-supported>
   </servlet>
     <servlet-mapping>
@@ -20,6 +20,6 @@
   </servlet-mapping>
   
     <listener>
-	    <listener-class>au.com.quaysystems.qrm.server.ConcurrentManager</listener-class>
+	    <listener-class>au.com.quaysystems.qrm.server.ServletListenerConcurrentManager</listener-class>
     </listener>
 </web-app>

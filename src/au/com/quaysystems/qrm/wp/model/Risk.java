@@ -25,13 +25,7 @@ import javax.persistence.Transient;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 
-import au.com.quaysystems.qrm.wp.QRMImport;
-import au.com.quaysystems.qrm.wp.util.LikelihoodChart;
-import au.com.quaysystems.qrm.wp.util.MatrixPainter;
-import au.com.quaysystems.qrm.wp.util.Mitigation;
-import au.com.quaysystems.qrm.wp.util.ModelRiskLite;
-import au.com.quaysystems.qrm.wp.util.ModelToleranceMatrix;
-import au.com.quaysystems.qrm.wp.util.Project;
+import au.com.quaysystems.qrm.server.MatrixPainter;
 
 @Entity
 @Table( name="RISK" )
