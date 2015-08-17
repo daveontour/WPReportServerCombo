@@ -86,7 +86,6 @@ public class ReportProcessorWP  extends HttpServlet{
 	}
 	
 	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws IOException  {
-		String callback= req.getParameter("callback");
 		try {
 			String reportData = req.getParameter("reportData");
 			String reportID = req.getParameter("reportID");
@@ -102,7 +101,7 @@ public class ReportProcessorWP  extends HttpServlet{
 			if (!registeredSite){
 				// site is not registered, so check if has the correct demo keys
 				if (!(imp.siteKey.equalsIgnoreCase(demoKey) && imp.siteID.equalsIgnoreCase(demoID))){
-					ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Your site is unregistrerd and the demo key and ID are incorrect. Report not processed",3000);
+					ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Your site is unregistrerd and the demo key and ID are incorrect. Report not processed",3000,ipAddress);
 					return;
 				}
 			}
@@ -110,7 +109,7 @@ public class ReportProcessorWP  extends HttpServlet{
 			try {
 				QRMAsyncMessage message = new QRMAsyncMessage("reportChannel", reportData, reportID, ipAddress);
 				message.send();
-				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Queued for Execution",500);
+				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Queued for Execution",1500,ipAddress);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -125,7 +124,11 @@ public class ReportProcessorWP  extends HttpServlet{
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
 		String id = req.getParameter("id");
-
+		String ipAddress = req.getHeader("X-FORWARDED-FOR"); 
+		
+		if (ipAddress == null) {  
+			ipAddress = req.getRemoteAddr();  
+		}
 		
 		try (Connection conn = DriverManager.getConnection(hostURLReportAudit, hostUser, hostPass)){
 
@@ -151,6 +154,7 @@ public class ReportProcessorWP  extends HttpServlet{
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			ServletUserMessageManager.notifyUserMessage(userEmail, "Error Retreiving Report.", 3000, ipAddress);
 		}
 	}
 

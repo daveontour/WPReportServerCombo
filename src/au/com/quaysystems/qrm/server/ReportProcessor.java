@@ -99,7 +99,7 @@ public class ReportProcessor {
 		final QRMImport imp = gson.fromJson(reportData, QRMImport.class);
 		
 		try {
-			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 15000);
+			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 15000, ipAddress);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -209,7 +209,7 @@ public class ReportProcessor {
 					txn.commit();
 					
 					try {
-						ServletUserMessageManager.notifyUserReportReady(imp.userEmail, job.id);
+						ServletUserMessageManager.notifyUserReportReady(imp.userEmail, job.id, ipAddress);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}					

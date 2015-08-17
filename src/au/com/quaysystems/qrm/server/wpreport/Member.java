@@ -9,5 +9,6 @@ public class Member {
 	public String userEmail;
 	public Long lastRequest;
 	public String callback;
-	public Queue<String> queue = new LinkedList<String>();	
+	public Queue<String> queue = new LinkedList<String>();
+	public String ip;	
 }

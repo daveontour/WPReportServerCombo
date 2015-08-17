@@ -90,6 +90,12 @@ public class ServletUserMessageManager extends HttpServlet{
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
 		final String sessID = req.getSession().getId();
+		String ipAddress = req.getHeader("X-FORWARDED-FOR"); 
+		
+		if (ipAddress == null) {  
+			ipAddress = req.getRemoteAddr();  
+		}
+		
 
 		final String userEmail = req.getParameter("userEmail");
 		Member member = sessionMemberMap.get(sessID);
@@ -100,6 +106,7 @@ public class ServletUserMessageManager extends HttpServlet{
 			member.userEmail = userEmail;
 			member.callback = req.getParameter("callback");
 			member.lastRequest = new Date().getTime();
+			member.ip = ipAddress;
 			sessionMemberMap.put(sessID, member);
 		} else {
 			member.callback = req.getParameter("callback");
@@ -165,11 +172,11 @@ public class ServletUserMessageManager extends HttpServlet{
 	}
 
 
-	public static synchronized void notifyUserMessage(String userEmail, String msg, Integer dur) throws IOException	{
+	public static synchronized void notifyUserMessage(String userEmail, String msg, Integer dur, String ip) throws IOException	{
 
 		for (Member m : sessionMemberMap.values()){
 
-			if (!m.userEmail.equalsIgnoreCase(userEmail)){
+			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
 				continue;
 			}
 
@@ -183,11 +190,11 @@ public class ServletUserMessageManager extends HttpServlet{
 		}
 	}
 	
-	public static synchronized void notifyUserReportReady(String userEmail, Long id) throws IOException	{
+	public static synchronized void notifyUserReportReady(String userEmail, Long id, String ip) throws IOException	{
 
 		for (Member m : sessionMemberMap.values()){
 
-			if (!m.userEmail.equalsIgnoreCase(userEmail)){
+			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
 				continue;
 			}
 
