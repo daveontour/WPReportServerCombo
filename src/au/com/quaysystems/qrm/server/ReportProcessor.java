@@ -148,9 +148,8 @@ public class ReportProcessor {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
-					ServletUserMessageManager.notifyUserMessage(imp.userEmail,
-							"Sorry, an error was encountered on the Report Server", 3000, ipAddress);
+				try  {
+					ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG001", 3000, ipAddress);
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -181,12 +180,23 @@ public class ReportProcessor {
 					task.run();
 				} catch (Exception e) {
 					e.printStackTrace();
+					try  {
+						ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG002", 3000, ipAddress);
+						return;
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}			
 				}
 
 				job.reportResult = os.toByteArray();
 
 			} catch (Exception e) {
 				e.printStackTrace();
+				try  {
+					ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG003", 3000, ipAddress);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
 				return;
 			} finally {
 
@@ -214,6 +224,11 @@ public class ReportProcessor {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			try  {
+				ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG004", 3000, ipAddress);
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		} finally {
 			try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
 				Statement stmt = conn.createStatement();

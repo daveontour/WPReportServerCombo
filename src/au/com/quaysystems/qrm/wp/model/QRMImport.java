@@ -14,31 +14,31 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table( name="QRMIMPORT" )
+@Table( name="qrmimport" )
 public class QRMImport {
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy = "increment")
 	public Long id;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="IMPORT_PROJECT", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="project_id"))
+    @JoinTable(name="import_project", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="project_id"))
     @OrderColumn
 	public Project[] projects;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="IMPORT_RISK", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="risk_id"))
+    @JoinTable(name="import_risk", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="risk_id"))
     @OrderColumn
     public Risk[] risks;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="IMPORT_INCIDENT", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="incident_id"))
+    @JoinTable(name="import_incident", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="incident_id"))
     @OrderColumn
     public Incident[] incidents;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="IMPORT_REVIEW", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="review_id"))
+    @JoinTable(name="import_review", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="review_id"))
     @OrderColumn
     public Review[] reviews;
 
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="IMPORT_USER", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="user_id"))
+    @JoinTable(name="import_user", joinColumns=@JoinColumn(name="import_id"),inverseJoinColumns=@JoinColumn(name="user_id"))
     @OrderColumn
     public User[] users;
     @Transient

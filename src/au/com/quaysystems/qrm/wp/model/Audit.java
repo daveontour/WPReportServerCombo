@@ -14,7 +14,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table( name="AUDIT" )
+@Table( name="audit" )
 public class Audit {
 	@Id
 	@GeneratedValue(generator="increment")

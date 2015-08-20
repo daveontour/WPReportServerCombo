@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table( name="MITPLAN" )
+@Table( name="mitplan" )
 public class MitPlan {
 	@Id
 	@GeneratedValue(generator="increment")

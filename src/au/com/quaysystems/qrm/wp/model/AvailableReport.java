@@ -6,7 +6,7 @@ import javax.persistence.Table;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@Table( name="AVAILREPORT" )
+@Table( name="availreport" )
 public class AvailableReport {
 	@Id
 	@Expose

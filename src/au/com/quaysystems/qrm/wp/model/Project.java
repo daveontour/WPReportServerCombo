@@ -14,7 +14,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 @Entity
-@Table( name="PROJECT" )
+@Table( name="project" )
 public class Project {
 	@Id
 	public	int id;
@@ -24,31 +24,31 @@ public class Project {
 	String description;
 	String projectCode;
     @ElementCollection
-    @CollectionTable(name="PROJECT_OWNERSIDS", joinColumns=@JoinColumn(name="project_id"))
+    @CollectionTable(name="project_ownersids", joinColumns=@JoinColumn(name="project_id"))
     @OrderColumn
 	Integer[] ownersID;
     @ElementCollection
-    @CollectionTable(name="PROJECT_MANAGERSIDS", joinColumns=@JoinColumn(name="project_id"))
+    @CollectionTable(name="project_managersids", joinColumns=@JoinColumn(name="project_id"))
     @OrderColumn
 	Integer[] managersID;
     @ElementCollection
-    @CollectionTable(name="PROJECT_USERSIDS", joinColumns=@JoinColumn(name="project_id"))
+    @CollectionTable(name="project_usersids", joinColumns=@JoinColumn(name="project_id"))
     @OrderColumn
 	Integer[] usersID;
 	int projectRiskManager;
 	
 	@OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name="PROJECT_MATRIX", joinColumns=@JoinColumn(name="project_id"),inverseJoinColumns=@JoinColumn(name="matrix_id"))
+	@JoinTable(name="project_matrix", joinColumns=@JoinColumn(name="project_id"),inverseJoinColumns=@JoinColumn(name="matrix_id"))
 	public Matrix matrix;
 	
 	boolean inheritParentCategories;
     boolean inheritParentObjectives;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="PROJECT_CATEGORIES", joinColumns=@JoinColumn(name="project_id"),inverseJoinColumns=@JoinColumn(name="category_id"))
+    @JoinTable(name="project_categories", joinColumns=@JoinColumn(name="project_id"),inverseJoinColumns=@JoinColumn(name="category_id"))
     @OrderColumn
     Category[] categories;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="PROJECT_OBJECTIVES", joinColumns=@JoinColumn(name="project_id"),inverseJoinColumns=@JoinColumn(name="objective_id"))
+    @JoinTable(name="project_objectives", joinColumns=@JoinColumn(name="project_id"),inverseJoinColumns=@JoinColumn(name="objective_id"))
     @OrderColumn
     Objective[] objectives;
     int parent_id;

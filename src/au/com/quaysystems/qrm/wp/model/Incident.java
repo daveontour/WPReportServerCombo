@@ -9,7 +9,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 @Entity
-@Table( name="INCIDENT" )
+@Table( name="incident" )
 public class Incident {
 	@Column(columnDefinition="TEXT")
     String title;
@@ -29,11 +29,11 @@ public class Incident {
     String actions;
     String date;
     @ElementCollection
-    @CollectionTable(name="INCIDENTCOMMENT", joinColumns=@JoinColumn(name="incident_id"))
+    @CollectionTable(name="incidentcomment", joinColumns=@JoinColumn(name="incident_id"))
     @OrderColumn
     Comment[] comments;
     @ElementCollection
-    @CollectionTable(name="INCIDENTRISK", joinColumns=@JoinColumn(name="incident_id"))
+    @CollectionTable(name="incidentrisk", joinColumns=@JoinColumn(name="incident_id"))
     @OrderColumn
     int [] risks;
 	public void normalise() {

@@ -13,7 +13,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 @Entity
-@Table( name="REVIEW" )
+@Table( name="review" )
 public class Review {
 	@Id
 	Long id;
@@ -28,11 +28,11 @@ public class Review {
     String notes;
 	Boolean complete = false;
     @ElementCollection
-    @CollectionTable(name="REVIEW_RISK", joinColumns=@JoinColumn(name="review_id"))
+    @CollectionTable(name="review_risk", joinColumns=@JoinColumn(name="review_id"))
     @OrderColumn
     int [] risks;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="REVIEW_REVIEWRISKCOMMENT", joinColumns=@JoinColumn(name="review_id"),inverseJoinColumns=@JoinColumn(name="reviewriskcomment_id"))
+    @JoinTable(name="review_reviewriskcomment", joinColumns=@JoinColumn(name="review_id"),inverseJoinColumns=@JoinColumn(name="reviewriskcomment_id"))
     @OrderColumn
     ReviewRiskComment[] riskComments;
 	public void normalise() {

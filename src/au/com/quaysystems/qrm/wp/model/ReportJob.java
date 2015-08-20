@@ -12,7 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@Table( name="REPORTJOB" )
+@Table( name="reportjob" )
 public class ReportJob {
 	@Id
 	@GeneratedValue(generator="increment")

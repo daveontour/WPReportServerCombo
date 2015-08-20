@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table( name="OBJECTIVE" )
+@Table( name="objective" )
 public class Objective {
 	@Column(columnDefinition="TEXT")
 	String title;

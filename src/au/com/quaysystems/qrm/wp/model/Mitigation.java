@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table( name="MITIGATION" )
+@Table( name="mitigation" )
 public class Mitigation {
 	@Id
 	@GeneratedValue(generator="increment")
@@ -25,7 +25,7 @@ public class Mitigation {
 	@Column(columnDefinition="TEXT")
     String mitPlanSummaryUpdate;
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="MITIGATION_MITSTEP", joinColumns=@JoinColumn(name="mitigation_id"),inverseJoinColumns=@JoinColumn(name="mitigationstep_id"))
+    @JoinTable(name="mitigation_mitstep", joinColumns=@JoinColumn(name="mitigation_id"),inverseJoinColumns=@JoinColumn(name="mitigationstep_id"))
     @OrderColumn
     MitPlan[] mitPlan;
 }

@@ -10,7 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 
 @Entity
-@Table( name="CLIENTSITES", indexes = {@Index(name = "siteKey_index",  columnList="siteKey", unique = true)})
+@Table( name="clientsites", indexes = {@Index(name = "siteKey_index",  columnList="siteKey", unique = true)})
 public class ClientSites {
 	@Id
 	@GeneratedValue(generator="increment")

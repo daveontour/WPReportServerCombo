@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table( name="MATRIX" )
+@Table( name="matrix" )
 public class Matrix {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
