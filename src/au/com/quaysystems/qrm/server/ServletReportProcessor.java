@@ -18,42 +18,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.service.ServiceRegistry;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import au.com.quaysystems.qrm.wp.model.AvailableReport;
-import au.com.quaysystems.qrm.wp.model.ClientSites;
 import au.com.quaysystems.qrm.wp.model.QRMImport;
 import au.com.quaysystems.qrm.wp.model.ReportJob;
-import au.com.quaysystems.qrm.wp.model.ReportSet;
 
 @SuppressWarnings("serial")
 public class ServletReportProcessor  extends HttpServlet{
 
-	private static Properties configProp = new Properties();
-	private Configuration auditConfig;
-	private Properties props;
 	private String hostUser;
 	private String hostPass;
-	private String hibernateDialect;
-	private String hostDriverClass;
 	private String hostURLReportAudit;
-	private String hostURLAdmin;
 	private String demoID;
 	private String demoKey;
-	private String testID;
-	private String testKey;
-	private String testName;
-	private Configuration adminConfig;
-	private SessionFactory sfAdmin;
-	private SessionFactory sfAudit;
 	private Gson gson;
 
 	public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -80,6 +62,11 @@ public class ServletReportProcessor  extends HttpServlet{
 			removeReport(req, response);
 			return;
 		}
+		if (action.equalsIgnoreCase("neworder")){
+			System.out.println("New Order Received");
+			response.getWriter().print("OrederReceived");
+			return;
+		}
 	}
 	
 	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws IOException  {
@@ -93,7 +80,7 @@ public class ServletReportProcessor  extends HttpServlet{
 			}
 			
 			final QRMImport imp = gson.fromJson(reportData, QRMImport.class);			
-			boolean registeredSite = checkSiteKey(imp.siteKey, imp.siteID);
+			boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
 			
 			if (!registeredSite){
 				// site is not registered, so check if has the correct demo keys
@@ -156,12 +143,13 @@ public class ServletReportProcessor  extends HttpServlet{
 
 	public void removeReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
+		//Doesn't actually remove the record. Contents are nulled out and marked not to be shown to user. Kept for auditting and billing purposes
 		String userEmail = req.getParameter("userEmail");
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
 		String id = req.getParameter("id");
 
-		final Session auditsess = getAuditSession();
+		final Session auditsess = PersistenceUtils.getAuditSession();
 
 		try {
 
@@ -173,6 +161,7 @@ public class ServletReportProcessor  extends HttpServlet{
 					.add(Restrictions.eq("userLogin",userLogin))
 					.uniqueResult();
 			job.showUser = false;
+			job.reportResult = null;
 			auditsess.update(job);
 			txn.commit();
 		} catch (Exception e) {
@@ -192,7 +181,7 @@ public class ServletReportProcessor  extends HttpServlet{
 		String siteID = req.getParameter("siteID");
 		String callback= req.getParameter("callback");
 
-		if (!checkSiteKey(siteKey, siteID)){
+		if (!PersistenceUtils.checkSiteKey(siteKey, siteID)){
 			String res = callback+"({'error':'Your site has not been registered. You can generate reports but they will not be archived'})";
 			response.setContentType("text/javascript");
 			PrintWriter out = response.getWriter();
@@ -202,7 +191,7 @@ public class ServletReportProcessor  extends HttpServlet{
 
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 		List<ReportJob> job = null;
-		Session auditsess = getAuditSession();
+		Session auditsess = PersistenceUtils.getAuditSession();
 
 		try {
 
@@ -211,7 +200,8 @@ public class ServletReportProcessor  extends HttpServlet{
 					.add(Restrictions.eq("userEmail",userEmail))
 					.add(Restrictions.eq("userLogin",userLogin))
 					.add(Restrictions.eq("showUser",true))
-					.list();		
+					.list();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -226,28 +216,24 @@ public class ServletReportProcessor  extends HttpServlet{
 		out.println(res);
 	}
 
-	private boolean checkSiteKey(String siteKey, String siteID){
-		Session sess = getAdminSession();
-		@SuppressWarnings("rawtypes")
-		List sites = sess.createCriteria(ClientSites.class)
-		.add(Restrictions.eq("siteKey",siteKey))
-		.add(Restrictions.eq("siteID",siteID))
-		.list();
-		return sites.size() == 1;
-	}
 	@SuppressWarnings("unchecked")
 	public void getAvailableReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 		List<AvailableReport> reports = null;					
-		Session auditsess = getAuditSession();
+		Session adminsess = PersistenceUtils.getAdminSession();
+		String siteKey = req.getParameter("siteKey");
 
 		try {
-			reports =  auditsess.createCriteria(AvailableReport.class).list();		
+			reports =  adminsess.createCriteria(AvailableReport.class)
+					.add(Restrictions.or(
+							Restrictions.eq("publicReport", true),
+							Restrictions.and(Restrictions.eq("publicReport", false),Restrictions.eq("privateReportSiteID", siteKey))
+					)).list();		
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			auditsess.close();
+			adminsess.close();
 		}
 
 		String callback= req.getParameter("callback");
@@ -259,18 +245,26 @@ public class ServletReportProcessor  extends HttpServlet{
 		out.println(res);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void init(final ServletConfig sc) {
 		try {
 			super.init(sc);
 		} catch (ServletException e) {
 			e.printStackTrace();
 		}
-
+		
+		PersistenceUtils.init(sc);
+		
+		
 		try ( InputStream in = new FileInputStream(sc.getServletContext().getRealPath("/WPQRM.properties"))){			
 			try {
+				Properties configProp = new Properties();
 				configProp.load(in);
 				configProp.put("REPORT_PATH", sc.getServletContext().getRealPath("/reports").replace("\\", "/")+"\\");
+				hostUser = configProp.getProperty("HOSTUSER");
+				hostPass = configProp.getProperty("HOSTUSERPASS");
+				hostURLReportAudit = configProp.getProperty("HOSTURLREPORTAUDIT");
+				demoID = configProp.getProperty("DEMOID");
+				demoKey = configProp.getProperty("DEMOKEY");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -278,105 +272,9 @@ public class ServletReportProcessor  extends HttpServlet{
 			e.printStackTrace();
 		}
 
-		props = configProp;
-
-		hostURLReportAudit = props.getProperty("HOSTURLREPORTAUDIT");
-		hostURLAdmin = props.getProperty("HOSTURLSITEADMIN");
-		hostUser = props.getProperty("HOSTUSER");
-		hostPass = props.getProperty("HOSTUSERPASS");
-		hibernateDialect = props.getProperty("HIBERNATEDIALECT");
-		hostDriverClass = props.getProperty("HOSTDRIVERCLASS");
-		demoID = props.getProperty("DEMOID");
-		demoKey = props.getProperty("DEMOKEY");
-		testID = props.getProperty("TESTID");
-		testKey = props.getProperty("TESTKEY");
-		testName = props.getProperty("TESTNAME");
-
-		adminConfig = new Configuration()
-				.setProperty("hibernate.connection.driver_class",hostDriverClass)
-				.setProperty("hibernate.hbm2ddl.auto", "update")
-				.setProperty("hibernate.connection.url",hostURLAdmin)
-				.setProperty("hibernate.connection.username",hostUser)
-				.setProperty("hibernate.connection.password",hostPass)
-				.setProperty("hibernate.dialect", hibernateDialect)
-				.addAnnotatedClass(ClientSites.class);
-
-		auditConfig = new Configuration()
-				.setProperty("hibernate.connection.driver_class",hostDriverClass)
-				.setProperty("hibernate.hbm2ddl.auto", "update")
-				.setProperty("hibernate.connection.url",hostURLReportAudit)
-				.setProperty("hibernate.connection.username",hostUser)
-				.setProperty("hibernate.connection.password",hostPass)
-				.setProperty("hibernate.dialect", hibernateDialect)
-				.addAnnotatedClass(ReportJob.class)
-				.addAnnotatedClass(AvailableReport.class);
-
-		List<AvailableReport> reports = null;					
-		Session auditsess = getAuditSession();
-
-		try {
-			reports =  auditsess.createCriteria(AvailableReport.class).list();
-			if (reports.isEmpty()){
-				initReports();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			auditsess.close();
-		}
-
-		if (!checkSiteKey(testKey, testID)){
-			Session s = getAdminSession();
-			ClientSites site = new ClientSites();
-			site.siteID = testID;
-			site.siteKey = testKey;
-			site.siteName = testName;
-			Transaction txn = s.beginTransaction();
-			s.saveOrUpdate(site);
-			txn.commit();
-			s.close();
-		}
-
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
 		builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
 		gson = builder.create();
-	}
-
-	private void initReports() {
-
-		Gson gson = new Gson();
-		ReportSet reports = gson.fromJson(configProp.getProperty("REPORTS"), ReportSet.class);		
-		Session auditsess = getAuditSession();
-		
-		try {
-			Transaction txn = auditsess.beginTransaction();
-			for (AvailableReport report:reports.reports){
-				auditsess.saveOrUpdate(report);	
-			}
-			txn.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private Session getAuditSession(){
-		if (sfAudit == null){
-			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-			serviceRegistryBuilder.applySettings(auditConfig.getProperties());
-			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-			sfAudit = auditConfig.buildSessionFactory(serviceRegistry);
-		}
-		return sfAudit.openSession();
-	}
-
-	private Session getAdminSession(){
-		if (sfAdmin == null){
-			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-			serviceRegistryBuilder.applySettings(adminConfig.getProperties());
-			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-			sfAdmin = adminConfig.buildSessionFactory(serviceRegistry);
-		}
-		return sfAdmin.openSession();
 	}
 }

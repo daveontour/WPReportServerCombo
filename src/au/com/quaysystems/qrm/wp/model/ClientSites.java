@@ -20,4 +20,8 @@ public class ClientSites {
 	public String siteID;
 	@Column(name="siteKey", nullable = false)
 	public String siteKey;
+	public String orderID;
+	public String orderEmail;
+	public String orderDate;
+	public Boolean active = true;
 }

@@ -40,6 +40,7 @@ public class ServletUserMessageManager extends HttpServlet{
 	static Integer CLEANUP_INITIAL_DELAY = 60000;
 	static Integer CLEANUP_FREQUENCY = 60000;
 	static Integer POLL_NO_REFRESH_TIMEOUT = 90000;
+	private static Boolean DEBUG = false;
 
 	@Override
 	public void init(final ServletConfig sc){
@@ -63,10 +64,11 @@ public class ServletUserMessageManager extends HttpServlet{
 			CLEANUP_INITIAL_DELAY = Integer.parseInt(configProp.getProperty("CLEANUP_INITIAL_DELAY",CLEANUP_INITIAL_DELAY.toString()));
 			CLEANUP_FREQUENCY = Integer.parseInt(configProp.getProperty("CLEANUP_FREQUENCY",CLEANUP_FREQUENCY.toString()));
 			POLL_NO_REFRESH_TIMEOUT = Integer.parseInt(configProp.getProperty("POLL_NO_REFRESH_TIMEOUT",POLL_NO_REFRESH_TIMEOUT.toString()));
+			DEBUG = Boolean.parseBoolean(configProp.getProperty("DEBUG", "true"));
 			
-			System.out.println("Initial delay before starting clean up task (s): "+CLEANUP_INITIAL_DELAY/1000);
-			System.out.println("Frequency of clean up task (s): "+CLEANUP_FREQUENCY/1000);
-			System.out.println("No Poll Refresh timeout (s): "+POLL_NO_REFRESH_TIMEOUT/1000);
+			SOP("Initial delay before starting clean up task (s): "+CLEANUP_INITIAL_DELAY/1000);
+			SOP("Frequency of clean up task (s): "+CLEANUP_FREQUENCY/1000);
+			SOP("No Poll Refresh timeout (s): "+POLL_NO_REFRESH_TIMEOUT/1000);
 			
 			try {
 				sessionTimeout = Integer.parseInt(configProp.getProperty("SESSION_TIMEOUT"));
@@ -84,7 +86,9 @@ public class ServletUserMessageManager extends HttpServlet{
 	}
 
 	private static void SOP(String string) {
-		System.out.println(">>>>> "+string);
+		if (DEBUG){
+			System.out.println(">>>>> "+string);
+		}
 	}
 
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

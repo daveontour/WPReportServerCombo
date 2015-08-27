@@ -46,5 +46,9 @@ public class AvailableReport {
 	public boolean showSingleIncident = false;
 	@Expose
 	public boolean showDashboard = false;
+	@Expose
+	public boolean publicReport = true;
+	@Expose
+	public String  privateReportSiteID;
 
 }

@@ -11,7 +11,6 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -27,7 +26,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.service.ServiceRegistry;
 
 import com.google.gson.Gson;
@@ -37,7 +35,6 @@ import au.com.quaysystems.qrm.wp.model.Audit;
 import au.com.quaysystems.qrm.wp.model.AuditItem;
 import au.com.quaysystems.qrm.wp.model.AvailableReport;
 import au.com.quaysystems.qrm.wp.model.Category;
-import au.com.quaysystems.qrm.wp.model.ClientSites;
 import au.com.quaysystems.qrm.wp.model.Comment;
 import au.com.quaysystems.qrm.wp.model.Control;
 import au.com.quaysystems.qrm.wp.model.Incident;
@@ -48,7 +45,6 @@ import au.com.quaysystems.qrm.wp.model.Objective;
 import au.com.quaysystems.qrm.wp.model.Project;
 import au.com.quaysystems.qrm.wp.model.QRMImport;
 import au.com.quaysystems.qrm.wp.model.ReportJob;
-import au.com.quaysystems.qrm.wp.model.ReportSet;
 import au.com.quaysystems.qrm.wp.model.RespPlan;
 import au.com.quaysystems.qrm.wp.model.Response;
 import au.com.quaysystems.qrm.wp.model.Review;
@@ -60,26 +56,42 @@ public class ReportProcessor {
 	private static Properties configProp = new Properties();
 	private IReportEngine engine;
 	private Configuration repConfig;
-	private Configuration auditConfig;
-	private Properties props;
 	private String hostURLRoot;
 	private String hostUser;
 	private String hostPass;
 	private String hibernateDialect;
-	private String hostDriverClass;
-	private String hostURLReportAudit;
-	private String hostURLAdmin;
-	private String testID;
-	private String testKey;
-	private String testName;
-	private Configuration adminConfig;
-	private SessionFactory sfAdmin;
-	private SessionFactory sfAudit;
+
 	private SessionFactory sfReport;
 	private Gson gson;
 
 	public ReportProcessor(ServletContext sc) {
-		init(sc);
+		
+		
+		
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
+		builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
+		
+		try ( InputStream in = new FileInputStream(sc.getRealPath("/WPQRM.properties"))){			
+			try {
+				configProp.load(in);
+				configProp.put("REPORT_PATH", sc.getRealPath("/reports").replace("\\", "/")+"\\");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch ( Exception e) {
+			e.printStackTrace();
+		}
+		
+		engine = BirtEngineFactory.getInstance(configProp);
+
+
+		hostURLRoot = configProp.getProperty("HOSTURLROOT");
+		hostUser = configProp.getProperty("HOSTUSER");
+		hostPass = configProp.getProperty("HOSTUSERPASS");
+		hibernateDialect = configProp.getProperty("HIBERNATEDIALECT");
+		gson = builder.create();
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -89,7 +101,7 @@ public class ReportProcessor {
 		String dbname = new BigInteger(130, new SecureRandom()).toString(32);
 
 		QRMImport imp = gson.fromJson(reportData, QRMImport.class);
-		boolean registeredSite = checkSiteKey(imp.siteKey, imp.siteID);
+		boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
 
 		try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
 			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Preparing Server Data", 15000, ipAddress);
@@ -102,11 +114,13 @@ public class ReportProcessor {
 
 		try {
 
-			final Session auditsess = getAuditSession();
+			final Session auditsess = PersistenceUtils.getAuditSession();
 			final Session sess = getSession(hostURLRoot + "/" + dbname);
 			final ReportJob job = new ReportJob();
 
-			AvailableReport report = (AvailableReport) auditsess.get(AvailableReport.class, Long.parseLong(reportID));
+			final Session adminsess = PersistenceUtils.getAdminSession();
+			AvailableReport report = (AvailableReport) adminsess.get(AvailableReport.class, Long.parseLong(reportID));
+			adminsess.close();
 			String reportName = report.filename;
 
 			try {
@@ -220,7 +234,6 @@ public class ReportProcessor {
 				} finally {
 					auditsess.close();
 				}
-
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -238,102 +251,6 @@ public class ReportProcessor {
 				e.printStackTrace();
 			}
 		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private void init(ServletContext sc) {
-		try (InputStream in = new FileInputStream(sc.getRealPath("/WPQRM.properties"))) {
-			try {
-				configProp.load(in);
-				configProp.put("REPORT_PATH", sc.getRealPath("/reports").replace("\\", "/") + "\\");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		engine = BirtEngineFactory.getInstance(configProp);
-
-		props = configProp;
-
-		hostURLRoot = props.getProperty("HOSTURLROOT");
-		hostURLReportAudit = props.getProperty("HOSTURLREPORTAUDIT");
-		hostURLAdmin = props.getProperty("HOSTURLSITEADMIN");
-		hostUser = props.getProperty("HOSTUSER");
-		hostPass = props.getProperty("HOSTUSERPASS");
-		hibernateDialect = props.getProperty("HIBERNATEDIALECT");
-		hostDriverClass = props.getProperty("HOSTDRIVERCLASS");
-		testID = props.getProperty("TESTID");
-		testKey = props.getProperty("TESTKEY");
-		testName = props.getProperty("TESTNAME");
-
-		adminConfig = new Configuration().setProperty("hibernate.connection.driver_class", hostDriverClass)
-				.setProperty("hibernate.hbm2ddl.auto", "update").setProperty("hibernate.connection.url", hostURLAdmin)
-				.setProperty("hibernate.connection.username", hostUser)
-				.setProperty("hibernate.connection.password", hostPass)
-				.setProperty("hibernate.dialect", hibernateDialect).addAnnotatedClass(ClientSites.class);
-
-		auditConfig = new Configuration().setProperty("hibernate.connection.driver_class", hostDriverClass)
-				.setProperty("hibernate.hbm2ddl.auto", "update")
-				.setProperty("hibernate.connection.url", hostURLReportAudit)
-				.setProperty("hibernate.connection.username", hostUser)
-				.setProperty("hibernate.connection.password", hostPass)
-				.setProperty("hibernate.dialect", hibernateDialect).addAnnotatedClass(ReportJob.class)
-				.addAnnotatedClass(AvailableReport.class);
-
-		List<AvailableReport> reports = null;
-		Session auditsess = getAuditSession();
-
-		try {
-			reports = auditsess.createCriteria(AvailableReport.class).list();
-			if (reports.isEmpty()) {
-				initReports();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			auditsess.close();
-		}
-
-		if (!checkSiteKey(testKey, testID)) {
-			Session s = getAdminSession();
-			ClientSites site = new ClientSites();
-			site.siteID = testID;
-			site.siteKey = testKey;
-			site.siteName = testName;
-			Transaction txn = s.beginTransaction();
-			s.saveOrUpdate(site);
-			txn.commit();
-			s.close();
-		}
-
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
-		builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
-		gson = builder.create();
-
-	}
-
-	private Session getAuditSession() {
-		if (sfAudit == null) {
-			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-			serviceRegistryBuilder.applySettings(auditConfig.getProperties());
-			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-			sfAudit = auditConfig.buildSessionFactory(serviceRegistry);
-		}
-		return sfAudit.openSession();
-	}
-
-	private Session getAdminSession() {
-		if (sfAdmin == null) {
-			StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-			serviceRegistryBuilder.applySettings(adminConfig.getProperties());
-			ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
-			sfAdmin = adminConfig.buildSessionFactory(serviceRegistry);
-		}
-		return sfAdmin.openSession();
 	}
 
 	private Session getSession(String hostURL) {
@@ -341,14 +258,26 @@ public class ReportProcessor {
 		repConfig = new Configuration().setProperty("hibernate.cache.use_second_level_cache", "false")
 				.setProperty("hibernate.dialect", hibernateDialect).setProperty("hibernate.connection.url", hostURL)
 				.setProperty("hibernate.connection.username", hostUser)
-				.setProperty("hibernate.connection.password", hostPass).addAnnotatedClass(AuditItem.class)
-				.addAnnotatedClass(Audit.class).addAnnotatedClass(Category.class).addAnnotatedClass(Comment.class)
-				.addAnnotatedClass(Incident.class).addAnnotatedClass(Matrix.class).addAnnotatedClass(MitPlan.class)
-				.addAnnotatedClass(Mitigation.class).addAnnotatedClass(Response.class)
-				.addAnnotatedClass(Objective.class).addAnnotatedClass(Control.class).addAnnotatedClass(Control.class)
-				.addAnnotatedClass(Risk.class).addAnnotatedClass(Project.class)
-				.addAnnotatedClass(ReviewRiskComment.class).addAnnotatedClass(Review.class)
-				.addAnnotatedClass(RespPlan.class).addAnnotatedClass(User.class).addAnnotatedClass(QRMImport.class);
+				.setProperty("hibernate.connection.password", hostPass)
+				.addAnnotatedClass(AuditItem.class)
+				.addAnnotatedClass(Audit.class)
+				.addAnnotatedClass(Category.class)
+				.addAnnotatedClass(Comment.class)
+				.addAnnotatedClass(Incident.class)
+				.addAnnotatedClass(Matrix.class)
+				.addAnnotatedClass(MitPlan.class)
+				.addAnnotatedClass(Mitigation.class)
+				.addAnnotatedClass(Response.class)
+				.addAnnotatedClass(Objective.class)
+				.addAnnotatedClass(Control.class)
+				.addAnnotatedClass(Control.class)
+				.addAnnotatedClass(Risk.class)
+				.addAnnotatedClass(Project.class)
+				.addAnnotatedClass(ReviewRiskComment.class)
+				.addAnnotatedClass(Review.class)
+				.addAnnotatedClass(RespPlan.class)
+				.addAnnotatedClass(User.class)
+				.addAnnotatedClass(QRMImport.class);
 
 		StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
 		serviceRegistryBuilder.applySettings(repConfig.getProperties());
@@ -491,32 +420,6 @@ public class ReportProcessor {
 
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		}
-	}
-
-	private boolean checkSiteKey(String siteKey, String siteID) {
-		Session sess = getAdminSession();
-		@SuppressWarnings("rawtypes")
-		List sites = sess.createCriteria(ClientSites.class).add(Restrictions.eq("siteKey", siteKey))
-				.add(Restrictions.eq("siteID", siteID)).list();
-		return sites.size() == 1;
-	}
-
-	private void initReports() {
-
-		Gson gson = new Gson();
-
-		final ReportSet reports = gson.fromJson(configProp.getProperty("REPORTS"), ReportSet.class);
-		final Session auditsess = getAuditSession();
-
-		try {
-			Transaction txn = auditsess.beginTransaction();
-			for (AvailableReport report : reports.reports) {
-				auditsess.saveOrUpdate(report);
-			}
-			txn.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 }

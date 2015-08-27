@@ -29,6 +29,7 @@ public class ServletListenerConcurrentManager implements ServletContextListener 
 			reportThreads = "2";
 		}
 
+		
 		repProcessor = new ReportProcessor(se.getServletContext());
 		reportQueue = new WorkQueue(Integer.parseInt(reportThreads));
 	}
