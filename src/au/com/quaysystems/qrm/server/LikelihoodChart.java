@@ -1,4 +1,4 @@
-package au.com.quaysystems.qrm.wp.model;
+package au.com.quaysystems.qrm.server;
 
 import java.awt.Color;
 import java.awt.Font;

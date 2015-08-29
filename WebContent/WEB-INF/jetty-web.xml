@@ -3,4 +3,5 @@
  
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
 	<Set name="contextPath">/</Set>
+	<Set name="maxFormContentSize">5000000</Set>
 </Configure>

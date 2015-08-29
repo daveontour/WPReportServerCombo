@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 
+import au.com.quaysystems.qrm.server.LikelihoodChart;
 import au.com.quaysystems.qrm.server.MatrixPainter;
 
 @Entity
@@ -174,7 +175,10 @@ public class Risk {
 		objectiveIDs = new Integer[objectives.keySet().size()];
 		int i=0;
 		for (String objStr : objectives.keySet()){
-			objectiveIDs[i++] = Integer.parseInt(objStr);
+			// Add all the positive objectives
+			if (objectives.get(objStr)){
+				objectiveIDs[i++] = Integer.parseInt(objStr);
+			}
 		}
 
 		incidentIDs = new Integer[incidents.length];
