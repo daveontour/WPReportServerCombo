@@ -2,6 +2,9 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
     <property name="units">in</property>
+    <method name="beforeFactory"><![CDATA[if (!params["useWatermark"].value){
+    reportContext.getDesignHandle().findMasterPage("QRM Report Master Page").setProperty("backgroundImage", "");
+}]]></method>
     <property name="theme">QRM.defaultTheme</property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -30,6 +33,7 @@
     </parameters>
     <page-setup>
         <simple-master-page name="QRM Report Master Page" id="8069" extends="QRM.QRM Report Master Page">
+            <property name="backgroundImage">WebContent/reports/watermark.png</property>
             <overridden-values>
                 <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
                 <ref-entry baseId="7883" id="7883"/>

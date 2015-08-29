@@ -65,9 +65,7 @@ public class ReportProcessor {
 	private Gson gson;
 
 	public ReportProcessor(ServletContext sc) {
-		
-		
-		
+				
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Integer.class, new IntegerDeserializer());
 		builder.registerTypeAdapter(Double.class, new DoubleDeserializer());
