@@ -97,6 +97,7 @@ public class ReportProcessor {
 	@SuppressWarnings("unchecked")
 	public void deliver(String reportData, String reportID, String ipAddress) {
 
+		System.out.println(">>> Executing Report");
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>();
 		String dbname = new BigInteger(130, new SecureRandom()).toString(32);
 
@@ -215,6 +216,7 @@ public class ReportProcessor {
 			} finally {
 
 				try {
+					System.out.println(">>> Report Complete");
 
 					job.completed = true;
 					job.completedDate = new Date();

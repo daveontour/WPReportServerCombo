@@ -55,7 +55,11 @@ public class ServletReportProcessor  extends HttpServlet{
 			return;
 		}
 		if (action.equalsIgnoreCase("get_availablereports")){
-			getAvailableReports(req, response);
+			try {
+				getAvailableReports(req, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return;
 		}
 		if (action.equalsIgnoreCase("remove_report")){
@@ -70,6 +74,7 @@ public class ServletReportProcessor  extends HttpServlet{
 	}
 	
 	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws IOException  {
+		System.out.println(">>> Service Report");
 		try {
 			String reportData = req.getParameter("reportData");
 			String reportID = req.getParameter("reportID");
@@ -104,6 +109,7 @@ public class ServletReportProcessor  extends HttpServlet{
 
 	public void getReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println(">>> Get Report");
 		String userEmail = req.getParameter("userEmail");
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
@@ -116,7 +122,7 @@ public class ServletReportProcessor  extends HttpServlet{
 		
 		try (Connection conn = DriverManager.getConnection(hostURLReportAudit, hostUser, hostPass)){
 
-			ResultSet res = conn.createStatement().executeQuery("SELECT reportResult FROM REPORTJOB WHERE id = "+id+ " AND userEmail = '"+ userEmail+"' AND siteKey='"+siteKey+"' AND userLogin='"+userLogin+"'");
+			ResultSet res = conn.createStatement().executeQuery("SELECT reportResult FROM reportjob WHERE id = "+id+ " AND userEmail = '"+ userEmail+"' AND siteKey='"+siteKey+"' AND userLogin='"+userLogin+"'");
 			res.first();
 
 			ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
@@ -143,6 +149,7 @@ public class ServletReportProcessor  extends HttpServlet{
 
 	public void removeReport(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println(">>> Remove Report");
 		//Doesn't actually remove the record. Contents are nulled out and marked not to be shown to user. Kept for auditting and billing purposes
 		String userEmail = req.getParameter("userEmail");
 		String userLogin = req.getParameter("userLogin");
@@ -175,6 +182,7 @@ public class ServletReportProcessor  extends HttpServlet{
 	@SuppressWarnings("unchecked")
 	public void getUserReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println(">>> Get User Reports");
 		String userEmail = req.getParameter("userEmail");
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
@@ -218,6 +226,8 @@ public class ServletReportProcessor  extends HttpServlet{
 
 	@SuppressWarnings("unchecked")
 	public void getAvailableReports(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+		
+		System.out.println(">>> Get Available Report");
 
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 		List<AvailableReport> reports = null;					

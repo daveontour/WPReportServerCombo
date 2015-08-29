@@ -66,9 +66,9 @@ public class ServletUserMessageManager extends HttpServlet{
 			POLL_NO_REFRESH_TIMEOUT = Integer.parseInt(configProp.getProperty("POLL_NO_REFRESH_TIMEOUT",POLL_NO_REFRESH_TIMEOUT.toString()));
 			DEBUG = Boolean.parseBoolean(configProp.getProperty("DEBUG", "true"));
 			
-			SOP("Initial delay before starting clean up task (s): "+CLEANUP_INITIAL_DELAY/1000);
-			SOP("Frequency of clean up task (s): "+CLEANUP_FREQUENCY/1000);
-			SOP("No Poll Refresh timeout (s): "+POLL_NO_REFRESH_TIMEOUT/1000);
+//			SOP("Initial delay before starting clean up task (s): "+CLEANUP_INITIAL_DELAY/1000);
+//			SOP("Frequency of clean up task (s): "+CLEANUP_FREQUENCY/1000);
+//			SOP("No Poll Refresh timeout (s): "+POLL_NO_REFRESH_TIMEOUT/1000);
 			
 			try {
 				sessionTimeout = Integer.parseInt(configProp.getProperty("SESSION_TIMEOUT"));
@@ -76,7 +76,7 @@ public class ServletUserMessageManager extends HttpServlet{
 				sessionTimeout = 600;
 			}
 			
-			System.out.println("Session timeout (s): "+sessionTimeout);
+			SOP("Session timeout (s): "+sessionTimeout);
 			
 			new Timer().schedule(new CleanUpTask(), CLEANUP_INITIAL_DELAY, CLEANUP_FREQUENCY);
 		} catch (Exception e) {
@@ -125,7 +125,7 @@ public class ServletUserMessageManager extends HttpServlet{
 
 			@Override
 			public void onComplete(AsyncEvent event) throws IOException {
-				SOP("onComplete Called");
+				SOP("onComplete Called "+sessID);
 				asyncContexts.remove(sessID);
 			}
 
@@ -161,7 +161,6 @@ public class ServletUserMessageManager extends HttpServlet{
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			SOP("Error in Non Zero Queue Processing");
 		}
 	}
 

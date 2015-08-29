@@ -19,7 +19,7 @@ public class ServletListenerConcurrentManager implements ServletContextListener 
 	public void contextInitialized(final ServletContextEvent se) {
 
 		try {
-			configProp.load(new FileInputStream(se.getServletContext().getRealPath("/QRM.properties")));
+			configProp.load(new FileInputStream(se.getServletContext().getRealPath("/WPQRM.properties")));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

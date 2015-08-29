@@ -46,11 +46,9 @@ public class PersistenceUtils {
 	
 	@SuppressWarnings("unchecked")
 	public static void init(final ServletConfig sc) {
-		
 		if (init){
 			return;
 		}
-
 		try ( InputStream in = new FileInputStream(sc.getServletContext().getRealPath("/WPQRM.properties"))){			
 			try {
 				configProp.load(in);
