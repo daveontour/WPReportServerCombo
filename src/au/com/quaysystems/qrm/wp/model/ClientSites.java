@@ -1,4 +1,6 @@
 package au.com.quaysystems.qrm.wp.model;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,4 +26,5 @@ public class ClientSites {
 	public String orderEmail;
 	public String orderDate;
 	public Boolean active = true;
+	public Date validUntil;
 }

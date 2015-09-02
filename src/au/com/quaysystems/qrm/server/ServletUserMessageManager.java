@@ -48,16 +48,15 @@ public class ServletUserMessageManager extends HttpServlet{
 
 		InputStream in;
 		try {
-			in = new FileInputStream(sc.getServletContext().getRealPath("/QRM.properties"));
+			in = new FileInputStream(sc.getServletContext().getRealPath("/WPQRM.properties"));
 			try {
 				configProp.load(in);
 			} catch (IOException e) {
-				log.error("QRM Stack Trace", e);
+				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e1) {
-			log.error("QRM Stack Trace", e1);
+			e1.printStackTrace();
 		}
-
 
 		try {
 
@@ -66,22 +65,17 @@ public class ServletUserMessageManager extends HttpServlet{
 			POLL_NO_REFRESH_TIMEOUT = Integer.parseInt(configProp.getProperty("POLL_NO_REFRESH_TIMEOUT",POLL_NO_REFRESH_TIMEOUT.toString()));
 			DEBUG = Boolean.parseBoolean(configProp.getProperty("DEBUG", "true"));
 			
-//			SOP("Initial delay before starting clean up task (s): "+CLEANUP_INITIAL_DELAY/1000);
-//			SOP("Frequency of clean up task (s): "+CLEANUP_FREQUENCY/1000);
-//			SOP("No Poll Refresh timeout (s): "+POLL_NO_REFRESH_TIMEOUT/1000);
-			
 			try {
 				sessionTimeout = Integer.parseInt(configProp.getProperty("SESSION_TIMEOUT"));
 			} catch (NumberFormatException e) {
 				sessionTimeout = 600;
 			}
 			
-			SOP("Session timeout (s): "+sessionTimeout);
-			
+			SOP("Session timeout (s): "+sessionTimeout);			
 			new Timer().schedule(new CleanUpTask(), CLEANUP_INITIAL_DELAY, CLEANUP_FREQUENCY);
+			
 		} catch (Exception e) {
-			log.error("Could not start Cleanup Timer Task");
-			log.error("QRM Stack Trace", e);
+			e.printStackTrace();
 		}
 	}
 

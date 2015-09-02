@@ -3,6 +3,7 @@ package au.com.quaysystems.qrm.server;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -112,10 +113,14 @@ public class PersistenceUtils {
 				initReports();
 			}
 			if (!checkSiteKey(testKey, testID)){
+				
+				Long now = new Date().getTime();
+				Long future = now+10000L*60L*60L*24L*2000L;
 				ClientSites site = new ClientSites();
 				site.siteID = testID;
 				site.siteKey = testKey;
 				site.siteName = testName;
+				site.validUntil = new Date(future);
 				Transaction txn = adminsess.beginTransaction();
 				adminsess.saveOrUpdate(site);
 				txn.commit();
@@ -172,6 +177,7 @@ public class PersistenceUtils {
 		List sites = sess.createCriteria(ClientSites.class)
 		.add(Restrictions.eq("siteKey",siteKey))
 		.add(Restrictions.eq("siteID",siteID))
+		.add(Restrictions.gt("validUntil", new Date())) 
 		.list();
 		return sites.size() == 1;
 	}

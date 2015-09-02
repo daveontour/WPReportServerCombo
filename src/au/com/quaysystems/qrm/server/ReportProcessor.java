@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -35,6 +36,7 @@ import au.com.quaysystems.qrm.wp.model.Audit;
 import au.com.quaysystems.qrm.wp.model.AuditItem;
 import au.com.quaysystems.qrm.wp.model.AvailableReport;
 import au.com.quaysystems.qrm.wp.model.Category;
+import au.com.quaysystems.qrm.wp.model.ClientSites;
 import au.com.quaysystems.qrm.wp.model.Comment;
 import au.com.quaysystems.qrm.wp.model.Control;
 import au.com.quaysystems.qrm.wp.model.Incident;
@@ -103,10 +105,9 @@ public class ReportProcessor {
 		boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
 
 		try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
-			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Preparing Server Data", 15000, ipAddress);
+			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Preparing Server Data", 30000, ipAddress);
 			createDatabase(conn, dbname);
-			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 15000,
-					ipAddress);
+			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 60000, ipAddress);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -121,6 +122,7 @@ public class ReportProcessor {
 			AvailableReport report = (AvailableReport) adminsess.get(AvailableReport.class, Long.parseLong(reportID));
 			adminsess.close();
 			String reportName = report.filename;
+			
 
 			try {
 
@@ -154,6 +156,13 @@ public class ReportProcessor {
 				Transaction txn = sess.beginTransaction();
 				sess.save(imp);
 				txn.commit();
+				
+				if (report.id == 9){   //Relative Matrix Report
+					List<Risk> risks = sess.createCriteria(Risk.class).list();
+					List<Matrix> mats = sess.createCriteria(Matrix.class).list();
+					RelMatrixReportVisitor visitor = new RelMatrixReportVisitor();
+					visitor.process(taskParamMap, risks, mats.get(0));
+				}
 
 				Transaction txn2 = auditsess.beginTransaction();
 				auditsess.save(job);

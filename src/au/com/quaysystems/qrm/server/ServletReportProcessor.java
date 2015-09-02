@@ -34,8 +34,8 @@ public class ServletReportProcessor  extends HttpServlet{
 	private String hostUser;
 	private String hostPass;
 	private String hostURLReportAudit;
-	private String demoID;
-	private String demoKey;
+//	private String demoID;
+//	private String demoKey;
 	private Gson gson;
 
 	public void service(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -66,11 +66,6 @@ public class ServletReportProcessor  extends HttpServlet{
 			removeReport(req, response);
 			return;
 		}
-		if (action.equalsIgnoreCase("neworder")){
-			System.out.println("New Order Received");
-			response.getWriter().print("OrederReceived");
-			return;
-		}
 	}
 	
 	public void serviceReport(HttpServletRequest req, HttpServletResponse response) throws IOException  {
@@ -85,15 +80,15 @@ public class ServletReportProcessor  extends HttpServlet{
 			}
 			
 			final QRMImport imp = gson.fromJson(reportData, QRMImport.class);			
-			boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
+//			boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
 			
-			if (!registeredSite){
-				// site is not registered, so check if has the correct demo keys
-				if (!(imp.siteKey.equalsIgnoreCase(demoKey) && imp.siteID.equalsIgnoreCase(demoID))){
-					ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Your site is unregistrerd and the demo key and ID are incorrect. Report not processed",3000,ipAddress);
-					return;
-				}
-			}
+//			if (!registeredSite){
+//				// site is not registered, so check if has the correct demo keys
+//				if (!(imp.siteKey.equalsIgnoreCase(demoKey) && imp.siteID.equalsIgnoreCase(demoID))){
+//					ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Your site is unregistrerd and the demo key and ID are incorrect. Report not processed",3000,ipAddress);
+//					return;
+//				}
+//			}
 			
 			try {
 				AsyncMessage message = new AsyncMessage("reportChannel", reportData, reportID, ipAddress);
@@ -273,8 +268,8 @@ public class ServletReportProcessor  extends HttpServlet{
 				hostUser = configProp.getProperty("HOSTUSER");
 				hostPass = configProp.getProperty("HOSTUSERPASS");
 				hostURLReportAudit = configProp.getProperty("HOSTURLREPORTAUDIT");
-				demoID = configProp.getProperty("DEMOID");
-				demoKey = configProp.getProperty("DEMOKEY");
+//				demoID = configProp.getProperty("DEMOID");
+//				demoKey = configProp.getProperty("DEMOKEY");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

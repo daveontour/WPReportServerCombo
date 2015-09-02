@@ -33,7 +33,7 @@ import au.com.quaysystems.qrm.server.MatrixPainter;
 public class Risk {
 	@Column(columnDefinition="TEXT")
 	String title;
-	String riskProjectCode;
+	public String riskProjectCode;
 	@Column(columnDefinition="TEXT")
 	String description;
 	@Column(columnDefinition="TEXT")
@@ -42,10 +42,10 @@ public class Risk {
 	String consequence;
 	int owner;
 	int manager;
-	double inherentProb;
-	double inherentImpact;
-	double treatedProb;
-	double treatedImpact;
+	public double inherentProb;
+	public double inherentImpact;
+	public double treatedProb;
+	public double treatedImpact;
 	double inherentAbsProb;
 	double treatedAbsProb;
 	boolean impRep;
@@ -58,7 +58,7 @@ public class Risk {
 	boolean treatRetention;
 	boolean treatTransfer;
 	boolean treatMinimise;
-	boolean treated;
+	public boolean treated;
 	boolean summaryRisk;
 	boolean useCalContingency;
 	boolean useCalProb;
@@ -100,8 +100,8 @@ public class Risk {
 	HashMap<String, Boolean> objectives;
 	int treatedTolerance;
 	int inherentTolerance;
-	double currentProb;
-	double currentImpact;
+	public double currentProb;
+	public double currentImpact;
 	int currentTolerance;
 	int projectID;
 	@Id

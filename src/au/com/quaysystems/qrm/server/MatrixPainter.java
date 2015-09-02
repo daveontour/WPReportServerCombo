@@ -7,17 +7,16 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.util.List;
 
+import au.com.quaysystems.qrm.wp.model.Matrix;
 import au.com.quaysystems.qrm.wp.model.ModelRiskLite;
 import au.com.quaysystems.qrm.wp.model.ModelToleranceMatrix;
+import au.com.quaysystems.qrm.wp.model.Risk;
 
-
-//import au.com.quaysystems.qrm.QRMConstants;
-//import au.com.quaysystems.qrm.dto.ModelDataObjectAllocation;
-//import au.com.quaysystems.qrm.dto.ModelRiskLite;
-//import au.com.quaysystems.qrm.dto.ModelToleranceMatrix;
 
 public class MatrixPainter {
 
@@ -282,7 +281,33 @@ public class MatrixPainter {
 //		new TextLayout( "Probability", fn0, frc0).draw(g2d,0,0);
 //
 //	}
+	private static Color getTolerance(final int prob, final int impact,	final Matrix matrix) {
+		
+		if ((prob > matrix.maxProb) || (prob < 1)	|| (impact > matrix.maxImpact) || (impact < 1)) {
+			return Color.WHITE;
+		}
 
+		int strIndex = (prob - 1) * (int) matrix.maxImpact + (impact - 1);
+
+		try {
+			switch (Integer.parseInt(matrix.tolString.substring(strIndex, strIndex + 1))) {
+			case 1:
+				return new Color(28,132,198,255);
+			case 2:
+				return new Color(26,179,148,255);
+			case 3:
+				return new Color(255,255,85,255);
+			case 4:
+				return new Color(248,172,89,255);
+			case 5:
+				return new Color(237,85,101,255);
+			default:
+				return Color.WHITE;
+			}
+		} catch (RuntimeException e) {
+			return Color.WHITE;
+		}
+	}
 	private static Color getTolerance(final int prob, final int impact,	final ModelToleranceMatrix matrix) {
 		
 		if ((prob > matrix.getMaxProb()) || (prob < 1)	|| (impact > matrix.getMaxImpact()) || (impact < 1)) {
@@ -322,6 +347,115 @@ public class MatrixPainter {
 		drawMat(mat, sizex, sizey, g2d, risk);
 		return image;
 	}
+	
+	public static RenderedImage getPNGRelMatrix(final Matrix mat,
+			final int sizex, final int sizey,
+			final List<Risk> risks, final int state) {
+
+		BufferedImage image = new BufferedImage(sizex, sizey,BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = image.createGraphics();
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,	RenderingHints.VALUE_ANTIALIAS_ON);
+		drawMat(mat, sizex, sizey, g2d, risks, state);
+
+		return image;
+	}
+	private static void drawMat(final Matrix matrix,
+			final int width, final int height, final Graphics2D g2d,
+			final List<Risk> risks, final int state) {
+
+		int maxProb = matrix.maxProb;
+		int maxImpact = matrix.maxImpact;
+
+		int offSetX = 30;
+		int offSetY = 15;
+
+		int xUnit = ((width - 2 * offSetX) / maxImpact);
+		int yUnit = ((height - 2 * offSetY) / maxProb);
+
+		for (int x = 0; x < maxImpact; x++) {
+			for (int y = 0; y < maxProb; y++) {
+				g2d.setColor(getTolerance(maxProb - y, x + 1, matrix));
+				g2d.fillRect((x * xUnit) + offSetX, (y * yUnit) + offSetY,(xUnit), (yUnit));
+				g2d.setColor(Color.BLACK);
+				g2d.drawRect((x * xUnit) + offSetX, (y * yUnit) + offSetY,(xUnit), (yUnit));
+			}
+		}
+		g2d.setColor(Color.BLACK);
+		
+		// Draw the  x axis title
+		Font fn0 = new Font("Arial", Font.BOLD, 12);
+		g2d.setFont(fn0);
+		FontRenderContext frc0 = g2d.getFontRenderContext();
+		TextLayout layout0 = new TextLayout("Impact", fn0, frc0);
+		int fnW0 = (int) (layout0.getBounds().getWidth());
+		float textX0 = (width/2) - (fnW0/2);
+		float textY0 = height - 2;
+		layout0.draw(g2d, textX0, textY0);
+
+
+		if (risks != null) {
+			for (Risk risk : risks) {
+
+				Font fn = new Font("Arial", Font.PLAIN, 9);
+				g2d.setFont(fn);
+				FontRenderContext frc = g2d.getFontRenderContext();
+				TextLayout layout = new TextLayout(risk.riskProjectCode, fn, frc);
+				int fnH = (int) (layout.getBounds().getHeight());
+				int fnW = (int) (layout.getBounds().getWidth());
+
+				double impact = 0;
+				double prob = 0;
+
+				switch (state) {
+				case QRMConstants.TREATED:
+					impact = risk.treatedImpact;
+					prob = risk.treatedProb;
+					break;
+				case QRMConstants.INHERENT:
+					impact = risk.inherentImpact;
+					prob = risk.inherentProb;
+					break;
+				case QRMConstants.CURRENT:
+					impact = risk.currentImpact;
+					prob = risk.currentProb;
+					break;
+				default:
+					break;
+				}
+
+				double xC = offSetX + (impact - 1) * xUnit;
+				double yC = offSetY + (matrix.maxProb + 1 - prob) * yUnit;
+
+				g2d.setColor(Color.WHITE);
+				g2d.fillOval((int) (xC - 30), (int) (yC - 15), 60, 30);
+				g2d.setColor(Color.BLACK);
+				g2d.drawOval((int) (xC - 30), (int) (yC - 15), 60, 30);
+
+				float textX = new Float(xC - fnW / 2);
+				float textY = new Float(yC + fnH / 2);
+
+				if (risk.treated) {
+					g2d.setPaint(Color.BLUE);
+				} else {
+					g2d.setPaint(Color.RED);
+				}
+				layout.draw(g2d, textX, textY);
+			}
+		}
+		
+		//Draw the y axis title vertically by applying a Affine Transform to the coordinate system.
+		layout0 = new TextLayout("Probability", fn0, frc0);
+		fnW0 = (int) (layout0.getBounds().getWidth());
+		
+		AffineTransform at = new AffineTransform();
+	    at.translate(20, (int)((height/2)+(fnW0/2)));
+	    at.rotate(-Math.PI/2);
+	    g2d.setTransform(at);
+		g2d.setColor(Color.BLACK);
+		new TextLayout( "Probability", fn0, frc0).draw(g2d,0,0);
+
+	}
+
 
 
 //	public static RenderedImage getAllocationMatrix(

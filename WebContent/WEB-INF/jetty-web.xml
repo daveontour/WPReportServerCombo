@@ -4,4 +4,8 @@
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
 	<Set name="contextPath">/</Set>
 	<Set name="maxFormContentSize">5000000</Set>
+	 <Call name="setAttribute">
+        <Arg>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</Arg>
+        <Arg>.*/.*qrm[^/]*\.jar$</Arg>
+    </Call>
 </Configure>
