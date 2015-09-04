@@ -55,20 +55,45 @@ public class QRMImport {
     public String userLogin;
 
 	public void normalise(boolean prepareMatrix) {
-		for(Project project :projects){
-			project.normalise();
+		try {
+			for(Project project :projects){
+				project.normalise();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		for(Risk risk :risks){
-			risk.normalise(this, prepareMatrix);
+		try {
+			for(Risk risk :risks){
+				risk.normalise(this, prepareMatrix);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		for(Incident incident :incidents){
-			incident.normalise();
+		try {
+			for(Incident incident :incidents){
+				incident.normalise();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		for(Review review :reviews){
-			review.normalise();
+		try {
+			for(Review review :reviews){
+				review.normalise();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		for(User user :users){
-			user.normalise();
+		try {
+			for(User user :users){
+				user.normalise();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

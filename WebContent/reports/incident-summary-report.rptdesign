@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2008 &lt;&lt;Quay Systems Consulting>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
+    <html-property name="description">QRMReportName:Incident Summary Report;QRMReportDescription:Incident Summary Report;QRMReportType:Incident;QRMReportID:Incident Summary Report;</html-property>
+    <property name="units">in</property>
+    <text-property name="displayName">Blank Report</text-property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">WebContent/reports/QRM.rptlibrary</property>
+            <property name="namespace">QRM</property>
+        </structure>
+    </list-property>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="INCIDENTS" id="5220"
+ extends="QRM.INCIDENTS"/>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="4">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="Sub Heading" id="1351">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#0000FF</property>
+            <property name="paddingTop">10pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="QRM Report Master Page" id="5221" extends="QRM.QRM Report Master Page">
+            <overridden-values>
+                <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
+                <ref-entry baseId="7883" id="7883"/>
+                <ref-entry baseId="7884" id="7884"/>
+                <ref-entry baseId="7885" id="7885"/>
+                <ref-entry baseId="7886" id="7886"/>
+                <ref-entry baseId="7888" name="NewText" id="7888"/>
+                <ref-entry baseId="7887" id="7887"/>
+                <ref-entry baseId="7889" name="NewTextData27" id="7889"/>
+                <ref-entry baseId="7873" name="NewGrid6" id="7873"/>
+                <ref-entry baseId="7874" id="7874"/>
+                <ref-entry baseId="7875" id="7875"/>
+                <ref-entry baseId="7876" id="7876"/>
+                <ref-entry baseId="7877" id="7877"/>
+                <ref-entry baseId="7878" id="7878"/>
+                <ref-entry baseId="7881" name="NewTextData26" id="7881"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Heading1" id="5007">
+            <property name="canShrink">false</property>
+            <property name="width">100%</property>
+            <column id="3967"/>
+            <column id="3968"/>
+            <row id="3969">
+                <property name="backgroundColor">#EAEAEA</property>
+                <cell id="3970">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <property name="paddingTop">10pt</property>
+                    <property name="paddingLeft">10pt</property>
+                    <property name="paddingBottom">10pt</property>
+                    <label id="19">
+                        <property name="fontFamily">sans-serif</property>
+                        <property name="fontSize">18pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="textAlign">right</property>
+                        <text-property name="text">Incident Summary Report</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+        <table id="5009">
+            <property name="marginTop">20pt</property>
+            <property name="width">100%</property>
+            <property name="dataSet">INCIDENTS</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">id</property>
+                    <text-property name="displayName">id</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">actions</property>
+                    <text-property name="displayName">actions</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["actions"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">causes</property>
+                    <text-property name="displayName">causes</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["causes"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">consequences</property>
+                    <text-property name="displayName">consequences</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["consequences"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">controls</property>
+                    <text-property name="displayName">controls</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["controls"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">date</property>
+                    <text-property name="displayName">date</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["date"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">evaluated</property>
+                    <text-property name="displayName">evaluated</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["evaluated"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">identified</property>
+                    <text-property name="displayName">identified</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["identified"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">incidentCode</property>
+                    <text-property name="displayName">incidentCode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["incidentCode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">lessons</property>
+                    <text-property name="displayName">lessons</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["lessons"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reportedby</property>
+                    <text-property name="displayName">reportedby</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["reportedby"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">resolved</property>
+                    <text-property name="displayName">resolved</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["resolved"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">title</property>
+                    <text-property name="displayName">title</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">display_name</property>
+                    <text-property name="displayName">display_name</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["display_name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="5197"/>
+            <column id="5198"/>
+            <column id="5201">
+                <property name="textAlign">center</property>
+                <property name="width">40mm</property>
+            </column>
+            <column id="5219">
+                <property name="textAlign">center</property>
+                <property name="width">40mm</property>
+            </column>
+            <header>
+                <row id="5010">
+                    <cell id="5019">
+                        <label id="5020">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">Title</text-property>
+                        </label>
+                    </cell>
+                    <cell id="5021">
+                        <label id="5022">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="5027">
+                        <label id="5028">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">Date of Incident</text-property>
+                        </label>
+                    </cell>
+                    <cell id="5063">
+                        <label id="5064">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">Reported By</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="5083">
+                    <list-property name="highlightRules">
+                        <structure>
+                            <property name="operator">eq</property>
+                            <property name="backgroundColor">#C0C0C0</property>
+                            <expression name="testExpr">row[0]%2</expression>
+                            <simple-property-list name="value1">
+                                <value>0</value>
+                            </simple-property-list>
+                        </structure>
+                    </list-property>
+                    <cell id="5092"/>
+                    <cell id="5094"/>
+                    <cell id="5100"/>
+                    <cell id="5136"/>
+                </row>
+            </detail>
+            <footer>
+                <row id="5156">
+                    <cell id="5161"/>
+                    <cell id="5162"/>
+                    <cell id="5165"/>
+                    <cell id="5183"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

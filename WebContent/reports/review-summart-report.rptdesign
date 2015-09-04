@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2008 &lt;&lt;Quay Systems Consulting>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">QRMReportName:Review Summary Report;QRMReportDescription:Review Summary Report;QRMReportType:Review;QRMReportID:Review Summary Report;</html-property>
+    <property name="units">in</property>
+    <text-property name="displayName">Blank Report</text-property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">Quay Risk Manager Library.rptlibrary</property>
+            <property name="namespace">Quay Risk Manager Library</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="showDescription" id="4567">
+            <text-property name="promptText">Show Description of Risk</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">false</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showCause" id="4568">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showCat" id="4569">
+            <text-property name="promptText">showCat</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showTolerance" id="4570">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showKeyDates" id="4571">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showAreaImpacted" id="4572">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showObjectives" id="4573">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showProb" id="4574">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showImpact" id="4575">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showMitPlan" id="4576">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showControls" id="4577">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showComments" id="4578">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="showConsequence" id="4579">
+            <property name="valueType">static</property>
+            <property name="dataType">boolean</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+    </parameters>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Selected Reviews" id="4816"
+ extends="Quay Risk Manager Library.Selected Reviews"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Review Risk And Comments Detail" id="4976"
+ extends="Quay Risk Manager Library.Review Risk And Comments Detail"/>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="4">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="Sub Heading" id="1351">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#0000FF</property>
+            <property name="paddingTop">10pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+            <property name="topMargin">0.5in</property>
+            <property name="leftMargin">0.5in</property>
+            <property name="bottomMargin">0.5in</property>
+            <property name="rightMargin">0.5in</property>
+            <property name="showHeaderOnFirst">false</property>
+            <page-header>
+                <text-data id="930">
+                    <property name="fontFamily">sans-serif</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftColor">#000000</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="paddingTop">2pt</property>
+                    <property name="paddingBottom">2pt</property>
+                    <property name="paddingRight">5pt</property>
+                    <property name="textAlign">right</property>
+                    <expression name="valueExpr">"Review Summary Report"</expression>
+                    <property name="contentType">html</property>
+                </text-data>
+            </page-header>
+            <page-footer>
+                <grid id="1278">
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftColor">#000000</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="width">100%</property>
+                    <column id="1279">
+                        <property name="width">4.770833333333333in</property>
+                    </column>
+                    <column id="1295">
+                        <property name="width">1.4479166666666667in</property>
+                    </column>
+                    <column id="1280"/>
+                    <row id="1281">
+                        <cell id="1282">
+                            <text id="4921">
+                                <property name="fontFamily">sans-serif</property>
+                                <property name="fontSize">small</property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[Created on: <value-of>new Date()</value-of>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="1294">
+                            <label id="1296">
+                                <property name="fontFamily">sans-serif</property>
+                                <property name="fontSize">small</property>
+                                <property name="fontWeight">normal</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text">Quay Risk Manager</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1283">
+                            <text-data id="1285">
+                                <property name="fontFamily">sans-serif</property>
+                                <property name="fontSize">small</property>
+                                <property name="textAlign">right</property>
+                                <expression name="valueExpr">"Licensed to: "+params["Company"]</expression>
+                                <property name="contentType">html</property>
+                            </text-data>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="175">
+            <property name="width">100%</property>
+            <column id="176">
+                <property name="width">3.885in</property>
+            </column>
+            <column id="177">
+                <property name="width">3.145in</property>
+            </column>
+            <row id="178">
+                <property name="backgroundColor">#EAEAEA</property>
+                <cell id="179">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <property name="paddingTop">10pt</property>
+                    <property name="paddingLeft">10pt</property>
+                    <property name="paddingBottom">10pt</property>
+                    <label id="19">
+                        <property name="fontFamily">sans-serif</property>
+                        <property name="fontSize">18pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="textAlign">right</property>
+                        <text-property name="text">Review Summary Report</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+        <table id="4817">
+            <property name="marginTop">30pt</property>
+            <property name="height">0.7708333333333334in</property>
+            <property name="width">10.3125in</property>
+            <property name="dataSet">Selected Reviews</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">REVIEW_ID</property>
+                    <text-property name="displayName">REVIEW_ID</text-property>
+                    <expression name="expression">dataSetRow["REVIEW_ID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">PROJECT_ID</property>
+                    <text-property name="displayName">PROJECT_ID</text-property>
+                    <expression name="expression">dataSetRow["PROJECT_ID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">TITLE</property>
+                    <text-property name="displayName">TITLE</text-property>
+                    <expression name="expression">dataSetRow["TITLE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SCHEDULEDDATE</property>
+                    <text-property name="displayName">SCHEDULEDDATE</text-property>
+                    <expression name="expression">dataSetRow["SCHEDULEDDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">ACTUALDATE</property>
+                    <text-property name="displayName">ACTUALDATE</text-property>
+                    <expression name="expression">dataSetRow["ACTUALDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">REVIEWCOMPLETE</property>
+                    <text-property name="displayName">REVIEWCOMPLETE</text-property>
+                    <expression name="expression">dataSetRow["REVIEWCOMPLETE"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">REVIEWCOMMENTS</property>
+                    <text-property name="displayName">REVIEWCOMMENTS</text-property>
+                    <expression name="expression">dataSetRow["REVIEWCOMMENTS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">MAILUPDATEDATE</property>
+                    <text-property name="displayName">MAILUPDATEDATE</text-property>
+                    <expression name="expression">dataSetRow["MAILUPDATEDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">MAILUPDATECOMPLETE</property>
+                    <text-property name="displayName">MAILUPDATECOMPLETE</text-property>
+                    <expression name="expression">dataSetRow["MAILUPDATECOMPLETE"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">ID</property>
+                    <text-property name="displayName">ID</text-property>
+                    <expression name="expression">dataSetRow["ID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">SESSIONID</property>
+                    <text-property name="displayName">SESSIONID</text-property>
+                    <expression name="expression">dataSetRow["SESSIONID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">DATAELEMENT</property>
+                    <text-property name="displayName">DATAELEMENT</text-property>
+                    <expression name="expression">dataSetRow["DATAELEMENT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DATASTRING</property>
+                    <text-property name="displayName">DATASTRING</text-property>
+                    <expression name="expression">dataSetRow["DATASTRING"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">RANK</property>
+                    <text-property name="displayName">RANK</text-property>
+                    <expression name="expression">dataSetRow["RANK"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">DATABLOB</property>
+                    <text-property name="displayName">DATABLOB</text-property>
+                    <expression name="expression">dataSetRow["DATABLOB"]</expression>
+                    <property name="dataType">blob</property>
+                </structure>
+                <structure>
+                    <property name="name">IMAGEBLOB1</property>
+                    <text-property name="displayName">IMAGEBLOB1</text-property>
+                    <expression name="expression">dataSetRow["IMAGEBLOB1"]</expression>
+                    <property name="dataType">blob</property>
+                </structure>
+                <structure>
+                    <property name="name">IMAGEBLOB2</property>
+                    <text-property name="displayName">IMAGEBLOB2</text-property>
+                    <expression name="expression">dataSetRow["IMAGEBLOB2"]</expression>
+                    <property name="dataType">blob</property>
+                </structure>
+                <structure>
+                    <property name="name">DATAID</property>
+                    <text-property name="displayName">DATAID</text-property>
+                    <expression name="expression">dataSetRow["DATAID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <column id="4913"/>
+            <column id="4914">
+                <property name="width">10%</property>
+            </column>
+            <column id="4915">
+                <property name="width">10%</property>
+            </column>
+            <column id="5089">
+                <property name="width">10%</property>
+            </column>
+            <header>
+                <row id="5080">
+                    <cell id="5081">
+                        <label id="4944">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">0pt</property>
+                            <text-property name="text">Review</text-property>
+                        </label>
+                    </cell>
+                    <cell id="5082">
+                        <label id="4945">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text">Scheduled Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="5083">
+                        <label id="4946">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text">Actual Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="5084">
+                        <label id="5056">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text">Completed</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="5076">
+                    <list-property name="highlightRules">
+                        <structure>
+                            <property name="operator">is-true</property>
+                            <property name="backgroundColor">#C0C0C0</property>
+                            <expression name="testExpr">row[0]%2==0</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="5077">
+                        <data id="4861">
+                            <property name="resultSetColumn">TITLE</property>
+                        </data>
+                    </cell>
+                    <cell id="5078">
+                        <data id="4863">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Long Date</property>
+                                <property name="pattern">Long Date</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">SCHEDULEDDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="5079">
+                        <data id="4865">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Long Date</property>
+                                <property name="pattern">Long Date</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">ACTUALDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="5086">
+                        <text-data id="5057">
+                            <property name="textAlign">center</property>
+                            <expression name="valueExpr">(row["REVIEWCOMPLETE"]>0)?"Completed":"Not Completed"</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="4892">
+                    <cell id="4895"/>
+                    <cell id="4896"/>
+                    <cell id="4897"/>
+                    <cell id="5088"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

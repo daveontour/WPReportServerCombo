@@ -24,6 +24,14 @@ public class Incident {
     boolean controls;
     boolean consequences;
     boolean causes;
+    
+    boolean time = false;
+    boolean environment = false;
+    boolean safety = false;
+    boolean cost = false;
+    boolean reputation = false;
+    boolean spec = false;
+
     int reportedby;
     String lessons;
     String actions;
@@ -37,6 +45,11 @@ public class Incident {
     @OrderColumn
     int [] risks;
 	public void normalise() {
+		
+		description = description.replaceAll("^<p></p>+", "");
+		lessons = lessons.replaceAll("^<p></p>+", "");
+		actions = actions.replaceAll("^<p></p>+", "");
+		
 		if (comments == null) return;
 		for (Comment comment:comments){
 			comment.normalise();

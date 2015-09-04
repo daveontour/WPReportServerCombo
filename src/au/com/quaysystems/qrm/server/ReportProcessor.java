@@ -100,6 +100,8 @@ public class ReportProcessor {
 		System.out.println(">>> Executing Report");
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>();
 		String dbname = new BigInteger(130, new SecureRandom()).toString(32);
+		
+		dbname = "qrm3";
 
 		QRMImport imp = gson.fromJson(reportData, QRMImport.class);
 		boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
@@ -252,13 +254,13 @@ public class ReportProcessor {
 				e2.printStackTrace();
 			}
 		} finally {
-			try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
-				Statement stmt = conn.createStatement();
-				stmt.addBatch("DROP DATABASE IF EXISTS `" + dbname + "`");
-				stmt.executeBatch();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//			try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
+//				Statement stmt = conn.createStatement();
+//				stmt.addBatch("DROP DATABASE IF EXISTS `" + dbname + "`");
+//				stmt.executeBatch();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 
@@ -326,7 +328,7 @@ public class ReportProcessor {
 			stmt.addBatch(
 					"CREATE TABLE `import_user` (   `import_id` bigint(20) NOT NULL,   `user_id` bigint(20) NOT NULL,   `users_ORDER` int(11) NOT NULL,   PRIMARY KEY (`import_id`,`users_ORDER`),   UNIQUE KEY `UK_ltoaxcxec812i34he28rmb9op` (`user_id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch(
-					"CREATE TABLE `incident` (   `id` int(11) NOT NULL,   `actions` varchar(255) DEFAULT NULL,   `causes` bit(1) NOT NULL,   `consequences` bit(1) NOT NULL,   `controls` bit(1) NOT NULL,   `date` varchar(255) DEFAULT NULL,   `description` text,   `evaluated` bit(1) NOT NULL,   `identified` bit(1) NOT NULL,   `incidentCode` varchar(255) DEFAULT NULL,   `lessons` varchar(255) DEFAULT NULL,   `reportedby` int(11) NOT NULL,   `resolved` bit(1) NOT NULL,   `title` text,   PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
+					"CREATE TABLE `incident` (   `id` int(11) NOT NULL,   `actions` text DEFAULT NULL,   `causes` bit(1) NOT NULL,  `time` bit(1) NOT NULL,  `environment` bit(1) NOT NULL, `safety` bit(1) NOT NULL,  `cost` bit(1) NOT NULL, `reputation` bit(1) NOT NULL,`spec` bit(1) NOT NULL, `consequences` bit(1) NOT NULL,   `controls` bit(1) NOT NULL,   `date` varchar(255) DEFAULT NULL,   `description` text,   `evaluated` bit(1) NOT NULL,   `identified` bit(1) NOT NULL,   `incidentCode` varchar(255) DEFAULT NULL,   `lessons` text DEFAULT NULL,   `reportedby` int(11) NOT NULL,   `resolved` bit(1) NOT NULL,   `title` text,   PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch(
 					"CREATE TABLE `incidentcomment` (   `incident_id` int(11) NOT NULL,   `comments_id` bigint(20) NOT NULL,   `comments_ORDER` int(11) NOT NULL,   PRIMARY KEY (`incident_id`,`comments_ORDER`),   UNIQUE KEY `UK_9l2wfu645oujbhumxvglm8ptv` (`comments_id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 			stmt.addBatch(
