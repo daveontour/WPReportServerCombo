@@ -129,10 +129,21 @@ public class Risk {
 	byte[] matImage;
 	public void normalise(QRMImport qrmImport, boolean prepareMatrix) {
 		
-		description = description.replaceAll("^<p></p>+", "");
-		cause = cause.replaceAll("^<p></p>+", "");
-		consequence = consequence.replaceAll("^<p></p>+", "");
-		
+		description = description.replaceAll("<p>", "");
+		description = description.replaceAll("</p>", "<br/><br/>");
+
+		cause = cause.replaceAll("<p>", "");
+		cause = cause.replaceAll("</p>", "<br/><br/>");
+
+		consequence = consequence.replaceAll("<p>", "");
+		consequence = consequence.replaceAll("</p>", "<br/><br/>");
+
+		mitigation.mitPlanSummary = mitigation.mitPlanSummary.replaceAll("<p>", "");
+		mitigation.mitPlanSummaryUpdate = mitigation.mitPlanSummaryUpdate.replaceAll("<p>", "");
+
+		response.respPlanSummary = response.respPlanSummary.replaceAll("<p>", "");
+		response.respPlanSummaryUpdate = response.respPlanSummaryUpdate.replaceAll("<p>", "");
+
 		if (prepareMatrix) {
 			ByteArrayOutputStream bOutPre = new ByteArrayOutputStream();
 			ByteArrayOutputStream bOutPost = new ByteArrayOutputStream();

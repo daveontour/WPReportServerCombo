@@ -41,6 +41,8 @@
  extends="QRM.RISKOBJECTIVES"/>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RISKREVIEWS" id="8225"
  extends="QRM.RISKREVIEWS"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="COMMENTS" id="8325"
+ extends="QRM.COMMENTS"/>
     </data-sets>
     <styles>
         <style name="report" id="4">
@@ -2497,6 +2499,123 @@
                                             <property name="marginTop">-10pt</property>
                                             <property name="contentType">html</property>
                                             <text-property name="content"><![CDATA[<VALUE-OF format="html">row["comment"]</VALUE-OF>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+                <row id="8326">
+                    <cell id="8327">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <label id="8329">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginRight">5pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingRight">5pt</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Comments:</text-property>
+                        </label>
+                        <table id="8001">
+                            <property name="marginTop">10pt</property>
+                            <property name="dataSet">COMMENTS</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">id</property>
+                                    <text-property name="displayName">id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_author</property>
+                                    <text-property name="displayName">comment_author</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_author"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_author_email</property>
+                                    <text-property name="displayName">comment_author_email</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_author_email"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_content</property>
+                                    <text-property name="displayName">comment_content</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_content"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_date</property>
+                                    <text-property name="displayName">comment_date</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_date"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_id</property>
+                                    <text-property name="displayName">comment_id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_id"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_post_ID</property>
+                                    <text-property name="displayName">comment_post_ID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_post_ID"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">parentID</property>
+                                    <text-property name="displayName">parentID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["parentID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                            </list-property>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["parentID"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["id"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="8046">
+                                <property name="width">2.2708333333333335in</property>
+                            </column>
+                            <column id="8047">
+                                <property name="width">1.5104166666666667in</property>
+                            </column>
+                            <column id="8048"/>
+                            <column id="8049"/>
+                            <detail>
+                                <row id="8019">
+                                    <cell id="8022">
+                                        <data id="8023">
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="resultSetColumn">comment_author</property>
+                                        </data>
+                                        <data id="8025">
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="resultSetColumn">comment_author_email</property>
+                                        </data>
+                                        <data id="8029">
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="resultSetColumn">comment_date</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="8024">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <text id="8062">
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["comment_content"]</VALUE-OF>]]></text-property>
                                         </text>
                                     </cell>
                                 </row>

@@ -12,7 +12,7 @@
     <property name="layoutPreference">fixed layout</property>
     <list-property name="libraries">
         <structure>
-            <property name="fileName">WebContent/reports/QRM.rptlibrary</property>
+            <property name="fileName">QRM.rptlibrary</property>
             <property name="namespace">QRM</property>
         </structure>
     </list-property>

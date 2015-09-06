@@ -76,6 +76,11 @@ public class PersistenceUtils {
 
 		
 		adminConfig = new Configuration()
+				.setProperty("hibernate.c3p0.min_size","5")
+				.setProperty("hibernate.c3p0.max_size","20")
+				.setProperty("hibernate.c3p0.timeout","120")
+				.setProperty("hibernate.c3p0.max_statements","50")
+				.setProperty("hibernate.c3p0.idle_test_period","3000")
 				.setProperty("hibernate.connection.driver_class",hostDriverClass)
 				.setProperty("hibernate.hbm2ddl.auto", "update")
 				.setProperty("hibernate.connection.url",hostURLAdmin)
@@ -91,6 +96,11 @@ public class PersistenceUtils {
 				.addAnnotatedClass(AvailableReport.class);
 
 		auditConfig = new Configuration()
+				.setProperty("hibernate.c3p0.min_size","5")
+				.setProperty("hibernate.c3p0.max_size","25")
+				.setProperty("hibernate.c3p0.timeout","120")
+				.setProperty("hibernate.c3p0.max_statements","50")
+				.setProperty("hibernate.c3p0.idle_test_period","3000")
 				.setProperty("hibernate.connection.driver_class",hostDriverClass)
 				.setProperty("hibernate.hbm2ddl.auto", "update")
 				.setProperty("hibernate.connection.url",hostURLReportAudit)
@@ -129,9 +139,8 @@ public class PersistenceUtils {
 			e.printStackTrace();
 		} finally {
 			adminsess.close();
+			init = true;
 		}
-		
-		init = true;
 	}
 
 	private static void initReports() {
@@ -148,6 +157,8 @@ public class PersistenceUtils {
 			txn.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			adminsess.close();
 		}
 	}
 	
@@ -179,6 +190,7 @@ public class PersistenceUtils {
 		.add(Restrictions.eq("siteID",siteID))
 		.add(Restrictions.gt("validUntil", new Date())) 
 		.list();
+		sess.close();
 		return sites.size() == 1;
 	}
 }

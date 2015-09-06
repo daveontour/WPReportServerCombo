@@ -9,7 +9,7 @@
     <property name="layoutPreference">auto layout</property>
     <list-property name="libraries">
         <structure>
-            <property name="fileName">WebContent/reports/QRM.rptlibrary</property>
+            <property name="fileName">QRM.rptlibrary</property>
             <property name="namespace">QRM</property>
         </structure>
     </list-property>
@@ -66,6 +66,8 @@
  extends="QRM.INCIDENTS"/>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="INCIDENTRISKS" id="5771"
  extends="QRM.INCIDENTRISKS"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="COMMENTS" id="8000"
+ extends="QRM.COMMENTS"/>
     </data-sets>
     <styles>
         <style name="crosstab-cell" id="4">
@@ -150,7 +152,8 @@
         </grid>
         <table id="5445">
             <property name="pageBreakAfter">always</property>
-            <property name="width">100%</property>
+            <property name="pageBreakBefore">avoid</property>
+            <property name="width">7.5in</property>
             <property name="dataSet">INCIDENTS</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -286,110 +289,40 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
+            <column id="7978">
+                <property name="width">4cm</property>
+            </column>
             <column id="5452"/>
-            <header>
-                <row id="5446">
-                    <cell id="5447"/>
-                </row>
-            </header>
             <detail>
-                <row id="5448">
-                    <property name="pageBreakAfter">always</property>
-                    <cell id="5449">
-                        <grid id="5453">
-                            <property name="width">100%</property>
-                            <column id="5454">
-                                <property name="width">1.6770833333333333in</property>
+                <row id="7964">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7975">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="7966">
+                            <property name="pageBreakAfter">avoid</property>
+                            <column id="7967">
+                                <property name="width">5.604166666666667in</property>
                             </column>
-                            <column id="5455"/>
-                            <row id="5457">
-                                <cell id="5458">
-                                    <label id="5486">
+                            <column id="7968">
+                                <property name="width">1.9479166666666667in</property>
+                            </column>
+                            <row id="7969">
+                                <property name="backgroundColor">#F2DEDE</property>
+                                <cell id="7970">
+                                    <text-data id="7972">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
                                         <property name="fontWeight">bold</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Title:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="5459">
-                                    <text id="7894">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="paddingLeft">10pt</property>
+                                        <expression name="valueExpr">row["incidentCode"]+" - "+row["title"]</expression>
                                         <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<VALUE-OF format="html">row["title"]</VALUE-OF>]]></text-property>
-                                    </text>
+                                    </text-data>
                                 </cell>
-                            </row>
-                            <row id="5461">
-                                <cell id="5462">
-                                    <label id="5487">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Date of Incident:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="5463">
-                                    <data id="5764">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="paddingLeft">10pt</property>
-                                        <property name="resultSetColumn">date</property>
-                                    </data>
-                                </cell>
-                            </row>
-                            <row id="5480">
-                                <cell id="5481">
-                                    <label id="5488">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Reported By:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="5482">
-                                    <data id="7890">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="paddingLeft">10pt</property>
-                                        <property name="resultSetColumn">display_name</property>
-                                    </data>
-                                </cell>
-                            </row>
-                            <row id="5476">
-                                <cell id="5477">
-                                    <label id="5489">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Description of Incident:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="5478">
-                                    <text id="7892">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="paddingLeft">10pt</property>
-                                        <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<VALUE-OF format="html">row["description"]</VALUE-OF>]]></text-property>
-                                    </text>
-                                </cell>
-                            </row>
-                            <row id="7959">
-                                <cell id="7960">
-                                    <label id="7962">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Status:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="7961">
+                                <cell id="7971">
                                     <text-data id="7963">
                                         <property name="fontFamily">sans-serif</property>
-                                        <property name="marginLeft">10pt</property>
+                                        <property name="marginLeft">0pt</property>
+                                        <property name="marginRight">10pt</property>
+                                        <property name="textAlign">right</property>
                                         <list-property name="highlightRules">
                                             <structure>
                                                 <property name="operator">is-false</property>
@@ -403,928 +336,1105 @@
                                     </text-data>
                                 </cell>
                             </row>
-                            <row id="5471">
-                                <cell id="5472">
-                                    <label id="5490">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Lessons Learnt:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="5473">
-                                    <text id="7893">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="paddingLeft">10pt</property>
-                                        <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<VALUE-OF format="html">row["lessons"]</VALUE-OF>]]></text-property>
-                                    </text>
-                                </cell>
-                            </row>
-                            <row id="5536">
-                                <cell id="5537">
-                                    <label id="5539">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Impacted Areas:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="5538">
-                                    <grid id="5540">
-                                        <property name="marginTop">0pt</property>
-                                        <property name="marginLeft">10pt</property>
-                                        <property name="width">100%</property>
-                                        <column id="5541">
-                                            <property name="textAlign">center</property>
-                                            <property name="width">10mm</property>
-                                        </column>
-                                        <column id="5542">
-                                            <property name="width">40mm</property>
-                                        </column>
-                                        <column id="5543">
-                                            <property name="textAlign">center</property>
-                                            <property name="width">10mm</property>
-                                        </column>
-                                        <column id="5544">
-                                            <property name="width">40mm</property>
-                                        </column>
-                                        <column id="5545">
-                                            <property name="textAlign">center</property>
-                                            <property name="width">10mm</property>
-                                        </column>
-                                        <column id="5546"/>
-                                        <row id="5553">
-                                            <cell id="5554">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="7923">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["time"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                                <image id="7929">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["time"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                            </cell>
-                                            <cell id="5555">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="5578">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Time</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5556">
-                                                <property name="paddingLeft">10pt</property>
-                                                <label id="7926">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["spec"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                                <image id="7932">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["spec"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                            </cell>
-                                            <cell id="5557">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="5581">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Specification</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5558">
-                                                <property name="paddingLeft">10pt</property>
-                                            </cell>
-                                            <cell id="5559">
-                                                <property name="paddingLeft">1pt</property>
-                                            </cell>
-                                        </row>
-                                        <row id="5584">
-                                            <cell id="5585">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="7924">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["environment"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                                <image id="7930">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["environment"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                            </cell>
-                                            <cell id="5586">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="5579">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Environment</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5587">
-                                                <property name="paddingLeft">10pt</property>
-                                                <image id="7933">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["cost"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                                <label id="7927">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["cost"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5588">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="5582">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Cost</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5589">
-                                                <property name="paddingLeft">10pt</property>
-                                            </cell>
-                                            <cell id="5590">
-                                                <property name="paddingLeft">1pt</property>
-                                            </cell>
-                                        </row>
-                                        <row id="5597">
-                                            <cell id="5598">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="7925">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["safety"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                                <image id="7931">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["safety"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                            </cell>
-                                            <cell id="5599">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="5580">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Human Safety</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5600">
-                                                <property name="paddingLeft">10pt</property>
-                                                <image id="7934">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["reputation"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                                <label id="7928">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["reputation"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5601">
-                                                <property name="paddingLeft">1pt</property>
-                                                <label id="5583">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Reputation</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="5602">
-                                                <property name="paddingLeft">10pt</property>
-                                            </cell>
-                                            <cell id="5603">
-                                                <property name="paddingLeft">1pt</property>
-                                            </cell>
-                                        </row>
-                                    </grid>
-                                </cell>
-                            </row>
-                            <row id="7938">
-                                <cell id="7939">
-                                    <label id="5649">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="paddingRight">15pt</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Quality Assurance:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="7940">
-                                    <grid id="7941">
-                                        <property name="marginLeft">10pt</property>
-                                        <column id="7942">
-                                            <property name="textAlign">center</property>
-                                            <property name="width">0.3958333333333333in</property>
-                                        </column>
-                                        <column id="7943">
-                                            <property name="width">5.28125in</property>
-                                        </column>
-                                        <row id="7944">
-                                            <cell id="7945">
-                                                <image id="7903">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["identified"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                                <label id="7917">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["identified"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="7946">
-                                                <label id="5662">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Risks were identified</text-property>
-                                                </label>
-                                            </cell>
-                                        </row>
-                                        <row id="7947">
-                                            <cell id="7948">
-                                                <image id="7904">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["evaluated"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                                <label id="7918">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["evaluated"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="7949">
-                                                <label id="5663">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Risks adequately evaluated</text-property>
-                                                </label>
-                                            </cell>
-                                        </row>
-                                        <row id="7950">
-                                            <cell id="7951">
-                                                <image id="7905">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["controls"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                                <label id="7919">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["controls"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="7952">
-                                                <label id="5664">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Controls were effective</text-property>
-                                                </label>
-                                            </cell>
-                                        </row>
-                                        <row id="7953">
-                                            <cell id="7954">
-                                                <image id="7906">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["consequences"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                                <label id="7920">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["consequences"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="7955">
-                                                <label id="5665">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Consequences accurately assessed</text-property>
-                                                </label>
-                                            </cell>
-                                        </row>
-                                        <row id="7956">
-                                            <cell id="7957">
-                                                <image id="7907">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["causes"] == false</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <property name="source">embed</property>
-                                                    <property name="imageName">accept.png</property>
-                                                </image>
-                                                <label id="7921">
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">row["causes"] == true</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <text-property name="text">-</text-property>
-                                                </label>
-                                            </cell>
-                                            <cell id="7958">
-                                                <label id="5666">
-                                                    <property name="fontFamily">sans-serif</property>
-                                                    <property name="fontSize">small</property>
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Causes identified</text-property>
-                                                </label>
-                                            </cell>
-                                        </row>
-                                    </grid>
-                                </cell>
-                            </row>
-                            <row id="5465">
-                                <cell id="5466">
-                                    <label id="5529">
-                                        <property name="fontFamily">sans-serif</property>
-                                        <property name="fontSize">small</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="marginTop">10pt</property>
-                                        <property name="textAlign">right</property>
-                                        <text-property name="text">Risks Impacted:</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="5467">
-                                    <table id="5495">
-                                        <property name="marginTop">10pt</property>
-                                        <property name="marginLeft">10pt</property>
-                                        <property name="width">100%</property>
-                                        <property name="dataSet">INCIDENTRISKS</property>
-                                        <list-property name="boundDataColumns">
-                                            <structure>
-                                                <property name="name">incident_id</property>
-                                                <text-property name="displayName">incident_id</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["incident_id"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">risks</property>
-                                                <text-property name="displayName">risks</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["risks"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">risks_ORDER</property>
-                                                <text-property name="displayName">risks_ORDER</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["risks_ORDER"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">id</property>
-                                                <text-property name="displayName">id</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">cause</property>
-                                                <text-property name="displayName">cause</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["cause"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">consequence</property>
-                                                <text-property name="displayName">consequence</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["consequence"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">currentImpact</property>
-                                                <text-property name="displayName">currentImpact</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["currentImpact"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">currentProb</property>
-                                                <text-property name="displayName">currentProb</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["currentProb"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">currentTolerance</property>
-                                                <text-property name="displayName">currentTolerance</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["currentTolerance"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">description</property>
-                                                <text-property name="displayName">description</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">end</property>
-                                                <text-property name="displayName">end</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["end"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">estContingency</property>
-                                                <text-property name="displayName">estContingency</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["estContingency"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">impCost</property>
-                                                <text-property name="displayName">impCost</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["impCost"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">impEnviron</property>
-                                                <text-property name="displayName">impEnviron</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["impEnviron"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">impRep</property>
-                                                <text-property name="displayName">impRep</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["impRep"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">impSafety</property>
-                                                <text-property name="displayName">impSafety</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["impSafety"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">impSpec</property>
-                                                <text-property name="displayName">impSpec</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["impSpec"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">impTime</property>
-                                                <text-property name="displayName">impTime</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["impTime"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">inherentAbsProb</property>
-                                                <text-property name="displayName">inherentAbsProb</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["inherentAbsProb"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">inherentImpact</property>
-                                                <text-property name="displayName">inherentImpact</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["inherentImpact"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">inherentProb</property>
-                                                <text-property name="displayName">inherentProb</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["inherentProb"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">inherentTolerance</property>
-                                                <text-property name="displayName">inherentTolerance</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["inherentTolerance"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">likeAlpha</property>
-                                                <text-property name="displayName">likeAlpha</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["likeAlpha"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">likePostAlpha</property>
-                                                <text-property name="displayName">likePostAlpha</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["likePostAlpha"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">likePostT</property>
-                                                <text-property name="displayName">likePostT</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["likePostT"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">likePostType</property>
-                                                <text-property name="displayName">likePostType</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["likePostType"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">likeT</property>
-                                                <text-property name="displayName">likeT</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["likeT"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">likeType</property>
-                                                <text-property name="displayName">likeType</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["likeType"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">manager</property>
-                                                <text-property name="displayName">manager</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["manager"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">matImage</property>
-                                                <text-property name="displayName">matImage</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["matImage"]</expression>
-                                                <property name="dataType">blob</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">owner</property>
-                                                <text-property name="displayName">owner</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["owner"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">rank</property>
-                                                <text-property name="displayName">rank</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["rank"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">postLikeImage</property>
-                                                <text-property name="displayName">postLikeImage</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["postLikeImage"]</expression>
-                                                <property name="dataType">blob</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">preLikeImage</property>
-                                                <text-property name="displayName">preLikeImage</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["preLikeImage"]</expression>
-                                                <property name="dataType">blob</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">primcatID</property>
-                                                <text-property name="displayName">primcatID</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["primcatID"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">projectID</property>
-                                                <text-property name="displayName">projectID</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["projectID"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">riskProjectCode</property>
-                                                <text-property name="displayName">riskProjectCode</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["riskProjectCode"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">seccatID</property>
-                                                <text-property name="displayName">seccatID</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["seccatID"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">start</property>
-                                                <text-property name="displayName">start</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["start"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">summaryRisk</property>
-                                                <text-property name="displayName">summaryRisk</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["summaryRisk"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">title</property>
-                                                <text-property name="displayName">title</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["title"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatAvoid</property>
-                                                <text-property name="displayName">treatAvoid</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatAvoid"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatMinimise</property>
-                                                <text-property name="displayName">treatMinimise</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatMinimise"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatRetention</property>
-                                                <text-property name="displayName">treatRetention</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatRetention"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatTransfer</property>
-                                                <text-property name="displayName">treatTransfer</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatTransfer"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treated</property>
-                                                <text-property name="displayName">treated</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treated"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatedAbsProb</property>
-                                                <text-property name="displayName">treatedAbsProb</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatedAbsProb"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatedImpact</property>
-                                                <text-property name="displayName">treatedImpact</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatedImpact"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatedProb</property>
-                                                <text-property name="displayName">treatedProb</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatedProb"]</expression>
-                                                <property name="dataType">float</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">treatedTolerance</property>
-                                                <text-property name="displayName">treatedTolerance</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["treatedTolerance"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">useCalContingency</property>
-                                                <text-property name="displayName">useCalContingency</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["useCalContingency"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">useCalProb</property>
-                                                <text-property name="displayName">useCalProb</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["useCalProb"]</expression>
-                                                <property name="dataType">integer</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">managerName</property>
-                                                <text-property name="displayName">managerName</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["managerName"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">ownerName</property>
-                                                <text-property name="displayName">ownerName</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["ownerName"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">primCatName</property>
-                                                <text-property name="displayName">primCatName</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["primCatName"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">secCatName</property>
-                                                <text-property name="displayName">secCatName</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["secCatName"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">mitPlanSummary</property>
-                                                <text-property name="displayName">mitPlanSummary</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["mitPlanSummary"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">mitPlanSummaryUpdate</property>
-                                                <text-property name="displayName">mitPlanSummaryUpdate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["mitPlanSummaryUpdate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">respPlanSummary</property>
-                                                <text-property name="displayName">respPlanSummary</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["respPlanSummary"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">respPlanSummaryUpdate</property>
-                                                <text-property name="displayName">respPlanSummaryUpdate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["respPlanSummaryUpdate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditIDDate</property>
-                                                <text-property name="displayName">auditIDDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditIDDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditIDRevDate</property>
-                                                <text-property name="displayName">auditIDRevDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditIDRevDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditIDAppDate</property>
-                                                <text-property name="displayName">auditIDAppDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditIDAppDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditEvalDate</property>
-                                                <text-property name="displayName">auditEvalDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditEvalDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditEvalRevDate</property>
-                                                <text-property name="displayName">auditEvalRevDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditEvalRevDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditEvalAppDate</property>
-                                                <text-property name="displayName">auditEvalAppDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditEvalAppDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditMitDate</property>
-                                                <text-property name="displayName">auditMitDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditMitDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditMitRevDate</property>
-                                                <text-property name="displayName">auditMitRevDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditMitRevDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">auditMitAppDate</property>
-                                                <text-property name="displayName">auditMitAppDate</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["auditMitAppDate"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">projectTitle</property>
-                                                <text-property name="displayName">projectTitle</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["projectTitle"]</expression>
-                                                <property name="dataType">string</property>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="7973">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7976">
+                        <label id="5487">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Date of Incident:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7974">
+                        <data id="5764">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="paddingLeft">10pt</property>
+                            <property name="resultSetColumn">date</property>
+                        </data>
+                    </cell>
+                </row>
+                <row id="7991">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7992">
+                        <label id="5488">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Reported By:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7993">
+                        <data id="7890">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="paddingLeft">10pt</property>
+                            <property name="resultSetColumn">display_name</property>
+                        </data>
+                    </cell>
+                </row>
+                <row id="7988">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7989">
+                        <label id="5489">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Description:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7990">
+                        <text id="7892">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="paddingLeft">10pt</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["description"]</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="7985">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7986">
+                        <label id="5490">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Lessons Learnt:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7987">
+                        <text id="7893">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="paddingLeft">10pt</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["lessons"]</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="7982">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7983">
+                        <label id="5539">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Impacted Areas:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7984">
+                        <grid id="5540">
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">10pt</property>
+                            <property name="width">100%</property>
+                            <column id="5541">
+                                <property name="textAlign">center</property>
+                                <property name="width">10mm</property>
+                            </column>
+                            <column id="5542">
+                                <property name="width">40mm</property>
+                            </column>
+                            <column id="5543">
+                                <property name="textAlign">center</property>
+                                <property name="width">10mm</property>
+                            </column>
+                            <column id="5544">
+                                <property name="width">40mm</property>
+                            </column>
+                            <column id="5545">
+                                <property name="textAlign">center</property>
+                                <property name="width">10mm</property>
+                            </column>
+                            <column id="5546"/>
+                            <row id="5553">
+                                <cell id="5554">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="7923">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["time"] == true</expression>
                                             </structure>
                                         </list-property>
-                                        <list-property name="filter">
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                    <image id="7929">
+                                        <list-property name="visibility">
                                             <structure>
-                                                <property name="operator">eq</property>
-                                                <expression name="expr" type="javascript">row["incident_id"]</expression>
-                                                <simple-property-list name="value1">
-                                                    <value>row._outer["id"]</value>
-                                                </simple-property-list>
-                                                <property name="updateAggregation">true</property>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["time"] == false</expression>
                                             </structure>
                                         </list-property>
-                                        <column id="5525"/>
-                                        <detail>
-                                            <row id="5507">
-                                                <list-property name="highlightRules">
-                                                    <structure>
-                                                        <property name="operator">eq</property>
-                                                        <property name="backgroundColor">#C0C0C0</property>
-                                                        <expression name="testExpr">row[0]%2</expression>
-                                                        <simple-property-list name="value1">
-                                                            <value>0</value>
-                                                        </simple-property-list>
-                                                    </structure>
-                                                </list-property>
-                                                <cell id="5510">
-                                                    <text-data id="5530">
-                                                        <property name="fontFamily">sans-serif</property>
-                                                        <property name="fontSize">small</property>
-                                                        <property name="marginTop">0pt</property>
-                                                        <expression name="valueExpr">row["riskProjectCode"]+" - "+row["title"]</expression>
-                                                        <property name="contentType">plain</property>
-                                                    </text-data>
-                                                </cell>
-                                            </row>
-                                        </detail>
-                                    </table>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="5555">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="5578">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Time</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5556">
+                                    <property name="paddingLeft">10pt</property>
+                                    <label id="7926">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["spec"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                    <image id="7932">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["spec"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="5557">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="5581">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Specification</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5558">
+                                    <property name="paddingLeft">10pt</property>
+                                </cell>
+                                <cell id="5559">
+                                    <property name="paddingLeft">1pt</property>
+                                </cell>
+                            </row>
+                            <row id="5584">
+                                <cell id="5585">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="7924">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["environment"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                    <image id="7930">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["environment"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="5586">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="5579">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Environment</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5587">
+                                    <property name="paddingLeft">10pt</property>
+                                    <image id="7933">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["cost"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="7927">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["cost"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5588">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="5582">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Cost</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5589">
+                                    <property name="paddingLeft">10pt</property>
+                                </cell>
+                                <cell id="5590">
+                                    <property name="paddingLeft">1pt</property>
+                                </cell>
+                            </row>
+                            <row id="5597">
+                                <cell id="5598">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="7925">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["safety"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                    <image id="7931">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["safety"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="5599">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="5580">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Human Safety</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5600">
+                                    <property name="paddingLeft">10pt</property>
+                                    <image id="7934">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["reputation"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="7928">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["reputation"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5601">
+                                    <property name="paddingLeft">1pt</property>
+                                    <label id="5583">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Reputation</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="5602">
+                                    <property name="paddingLeft">10pt</property>
+                                </cell>
+                                <cell id="5603">
+                                    <property name="paddingLeft">1pt</property>
                                 </cell>
                             </row>
                         </grid>
+                    </cell>
+                </row>
+                <row id="7979">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7980">
+                        <label id="5649">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="paddingRight">15pt</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Quality Assurance:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7981">
+                        <grid id="7941">
+                            <property name="marginLeft">10pt</property>
+                            <column id="7942">
+                                <property name="textAlign">center</property>
+                                <property name="width">0.3958333333333333in</property>
+                            </column>
+                            <column id="7943">
+                                <property name="width">5.28125in</property>
+                            </column>
+                            <row id="7944">
+                                <cell id="7945">
+                                    <image id="7903">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["identified"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="7917">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["identified"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="7946">
+                                    <label id="5662">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Risks were identified</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="7947">
+                                <cell id="7948">
+                                    <image id="7904">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["evaluated"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="7918">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["evaluated"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="7949">
+                                    <label id="5663">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Risks adequately evaluated</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="7950">
+                                <cell id="7951">
+                                    <image id="7905">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["controls"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="7919">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["controls"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="7952">
+                                    <label id="5664">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Controls were effective</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="7953">
+                                <cell id="7954">
+                                    <image id="7906">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["consequences"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="7920">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["consequences"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="7955">
+                                    <label id="5665">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Consequences accurately assessed</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="7956">
+                                <cell id="7957">
+                                    <image id="7907">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["causes"] == false</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">accept.png</property>
+                                    </image>
+                                    <label id="7921">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["causes"] == true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">-</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="7958">
+                                    <label id="5666">
+                                        <property name="fontFamily">sans-serif</property>
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text">Causes identified</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="7994">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="7995">
+                        <label id="5529">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Risks Impacted:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7996">
+                        <table id="5495">
+                            <property name="marginTop">10pt</property>
+                            <property name="marginLeft">10pt</property>
+                            <property name="width">100%</property>
+                            <property name="dataSet">INCIDENTRISKS</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">incident_id</property>
+                                    <text-property name="displayName">incident_id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["incident_id"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">risks</property>
+                                    <text-property name="displayName">risks</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["risks"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">risks_ORDER</property>
+                                    <text-property name="displayName">risks_ORDER</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["risks_ORDER"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">id</property>
+                                    <text-property name="displayName">id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">cause</property>
+                                    <text-property name="displayName">cause</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["cause"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">consequence</property>
+                                    <text-property name="displayName">consequence</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["consequence"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">currentImpact</property>
+                                    <text-property name="displayName">currentImpact</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["currentImpact"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">currentProb</property>
+                                    <text-property name="displayName">currentProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["currentProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">currentTolerance</property>
+                                    <text-property name="displayName">currentTolerance</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["currentTolerance"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">description</property>
+                                    <text-property name="displayName">description</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">end</property>
+                                    <text-property name="displayName">end</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["end"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">estContingency</property>
+                                    <text-property name="displayName">estContingency</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["estContingency"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impCost</property>
+                                    <text-property name="displayName">impCost</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impCost"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impEnviron</property>
+                                    <text-property name="displayName">impEnviron</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impEnviron"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impRep</property>
+                                    <text-property name="displayName">impRep</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impRep"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impSafety</property>
+                                    <text-property name="displayName">impSafety</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impSafety"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impSpec</property>
+                                    <text-property name="displayName">impSpec</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impSpec"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impTime</property>
+                                    <text-property name="displayName">impTime</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impTime"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentAbsProb</property>
+                                    <text-property name="displayName">inherentAbsProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentAbsProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentImpact</property>
+                                    <text-property name="displayName">inherentImpact</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentImpact"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentProb</property>
+                                    <text-property name="displayName">inherentProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentTolerance</property>
+                                    <text-property name="displayName">inherentTolerance</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentTolerance"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likeAlpha</property>
+                                    <text-property name="displayName">likeAlpha</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likeAlpha"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likePostAlpha</property>
+                                    <text-property name="displayName">likePostAlpha</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likePostAlpha"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likePostT</property>
+                                    <text-property name="displayName">likePostT</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likePostT"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likePostType</property>
+                                    <text-property name="displayName">likePostType</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likePostType"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likeT</property>
+                                    <text-property name="displayName">likeT</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likeT"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likeType</property>
+                                    <text-property name="displayName">likeType</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likeType"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">manager</property>
+                                    <text-property name="displayName">manager</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["manager"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">matImage</property>
+                                    <text-property name="displayName">matImage</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["matImage"]</expression>
+                                    <property name="dataType">blob</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">owner</property>
+                                    <text-property name="displayName">owner</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["owner"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">rank</property>
+                                    <text-property name="displayName">rank</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["rank"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">postLikeImage</property>
+                                    <text-property name="displayName">postLikeImage</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["postLikeImage"]</expression>
+                                    <property name="dataType">blob</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">preLikeImage</property>
+                                    <text-property name="displayName">preLikeImage</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["preLikeImage"]</expression>
+                                    <property name="dataType">blob</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">primcatID</property>
+                                    <text-property name="displayName">primcatID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["primcatID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">projectID</property>
+                                    <text-property name="displayName">projectID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["projectID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">riskProjectCode</property>
+                                    <text-property name="displayName">riskProjectCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["riskProjectCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">seccatID</property>
+                                    <text-property name="displayName">seccatID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["seccatID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">start</property>
+                                    <text-property name="displayName">start</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["start"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">summaryRisk</property>
+                                    <text-property name="displayName">summaryRisk</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["summaryRisk"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">title</property>
+                                    <text-property name="displayName">title</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatAvoid</property>
+                                    <text-property name="displayName">treatAvoid</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatAvoid"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatMinimise</property>
+                                    <text-property name="displayName">treatMinimise</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatMinimise"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatRetention</property>
+                                    <text-property name="displayName">treatRetention</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatRetention"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatTransfer</property>
+                                    <text-property name="displayName">treatTransfer</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatTransfer"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treated</property>
+                                    <text-property name="displayName">treated</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treated"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedAbsProb</property>
+                                    <text-property name="displayName">treatedAbsProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedAbsProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedImpact</property>
+                                    <text-property name="displayName">treatedImpact</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedImpact"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedProb</property>
+                                    <text-property name="displayName">treatedProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedTolerance</property>
+                                    <text-property name="displayName">treatedTolerance</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedTolerance"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">useCalContingency</property>
+                                    <text-property name="displayName">useCalContingency</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["useCalContingency"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">useCalProb</property>
+                                    <text-property name="displayName">useCalProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["useCalProb"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">managerName</property>
+                                    <text-property name="displayName">managerName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["managerName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ownerName</property>
+                                    <text-property name="displayName">ownerName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ownerName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">primCatName</property>
+                                    <text-property name="displayName">primCatName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["primCatName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">secCatName</property>
+                                    <text-property name="displayName">secCatName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["secCatName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">mitPlanSummary</property>
+                                    <text-property name="displayName">mitPlanSummary</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["mitPlanSummary"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">mitPlanSummaryUpdate</property>
+                                    <text-property name="displayName">mitPlanSummaryUpdate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["mitPlanSummaryUpdate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">respPlanSummary</property>
+                                    <text-property name="displayName">respPlanSummary</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["respPlanSummary"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">respPlanSummaryUpdate</property>
+                                    <text-property name="displayName">respPlanSummaryUpdate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["respPlanSummaryUpdate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIDDate</property>
+                                    <text-property name="displayName">auditIDDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIDDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIDRevDate</property>
+                                    <text-property name="displayName">auditIDRevDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIDRevDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIDAppDate</property>
+                                    <text-property name="displayName">auditIDAppDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIDAppDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalDate</property>
+                                    <text-property name="displayName">auditEvalDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalRevDate</property>
+                                    <text-property name="displayName">auditEvalRevDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalRevDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalAppDate</property>
+                                    <text-property name="displayName">auditEvalAppDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalAppDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitDate</property>
+                                    <text-property name="displayName">auditMitDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitRevDate</property>
+                                    <text-property name="displayName">auditMitRevDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitRevDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitAppDate</property>
+                                    <text-property name="displayName">auditMitAppDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitAppDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">projectTitle</property>
+                                    <text-property name="displayName">projectTitle</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["projectTitle"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["incident_id"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["id"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="5525"/>
+                            <detail>
+                                <row id="5507">
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">eq</property>
+                                            <property name="backgroundColor">#C0C0C0</property>
+                                            <expression name="testExpr">row[0]%2</expression>
+                                            <simple-property-list name="value1">
+                                                <value>0</value>
+                                            </simple-property-list>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="5510">
+                                        <text-data id="5530">
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="fontSize">small</property>
+                                            <property name="marginTop">0pt</property>
+                                            <expression name="valueExpr">row["riskProjectCode"]+" - "+row["title"]</expression>
+                                            <property name="contentType">plain</property>
+                                        </text-data>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+                <row id="8053">
+                    <property name="pageBreakAfter">always</property>
+                    <cell id="8054">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <label id="8056">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="fontSize">small</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Comments:</text-property>
+                        </label>
+                        <table id="8001">
+                            <property name="marginTop">10pt</property>
+                            <property name="dataSet">COMMENTS</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">id</property>
+                                    <text-property name="displayName">id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_author</property>
+                                    <text-property name="displayName">comment_author</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_author"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_author_email</property>
+                                    <text-property name="displayName">comment_author_email</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_author_email"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_content</property>
+                                    <text-property name="displayName">comment_content</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_content"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_date</property>
+                                    <text-property name="displayName">comment_date</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_date"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_id</property>
+                                    <text-property name="displayName">comment_id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_id"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">comment_post_ID</property>
+                                    <text-property name="displayName">comment_post_ID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["comment_post_ID"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">parentID</property>
+                                    <text-property name="displayName">parentID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["parentID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                            </list-property>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["parentID"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["id"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="8046">
+                                <property name="width">2.2708333333333335in</property>
+                            </column>
+                            <column id="8047">
+                                <property name="width">1.5104166666666667in</property>
+                            </column>
+                            <column id="8048"/>
+                            <column id="8049"/>
+                            <detail>
+                                <row id="8019">
+                                    <cell id="8022">
+                                        <data id="8023">
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="resultSetColumn">comment_author</property>
+                                        </data>
+                                        <data id="8025">
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="resultSetColumn">comment_author_email</property>
+                                        </data>
+                                        <data id="8029">
+                                            <property name="fontFamily">sans-serif</property>
+                                            <property name="resultSetColumn">comment_date</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="8024">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <text id="8062">
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<VALUE-OF format="html">row["comment_content"]</VALUE-OF>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
                     </cell>
                 </row>
             </detail>

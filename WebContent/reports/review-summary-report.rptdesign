@@ -9,8 +9,8 @@
     <property name="layoutPreference">auto layout</property>
     <list-property name="libraries">
         <structure>
-            <property name="fileName">Quay Risk Manager Library.rptlibrary</property>
-            <property name="namespace">Quay Risk Manager Library</property>
+            <property name="fileName">QRM.rptlibrary</property>
+            <property name="namespace">QRM</property>
         </structure>
     </list-property>
     <parameters>

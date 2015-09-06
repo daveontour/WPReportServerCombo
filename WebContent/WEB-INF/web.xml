@@ -17,6 +17,44 @@
     <servlet-name>orderServlet</servlet-name>
     <url-pattern>/order</url-pattern>
   </servlet-mapping>
+
+ <servlet>
+    <servlet-name>removeReportServlet</servlet-name>
+    <servlet-class>au.com.quaysystems.qrm.server.ServletRemoveReport</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>removeReportServlet</servlet-name>
+    <url-pattern>/removeReport</url-pattern>
+  </servlet-mapping>
+
+ <servlet>
+    <servlet-name>userReportServlet</servlet-name>
+    <servlet-class>au.com.quaysystems.qrm.server.ServletUserReports</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>userReportServlet</servlet-name>
+    <url-pattern>/userReports</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>availReportServlet</servlet-name>
+    <servlet-class>au.com.quaysystems.qrm.server.ServletGetAvailableReports</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>availReportServlet</servlet-name>
+    <url-pattern>/availableReports</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>getReportServlet</servlet-name>
+    <servlet-class>au.com.quaysystems.qrm.server.ServletGetReport</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>getReportServlet</servlet-name>
+    <url-pattern>/getReport</url-pattern>
+  </servlet-mapping>
+
+
   <servlet>
     <servlet-name>userMessageManager</servlet-name>
     <servlet-class>au.com.quaysystems.qrm.server.ServletUserMessageManager</servlet-class>

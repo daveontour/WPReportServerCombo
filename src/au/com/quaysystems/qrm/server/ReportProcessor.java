@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +37,6 @@ import au.com.quaysystems.qrm.wp.model.Audit;
 import au.com.quaysystems.qrm.wp.model.AuditItem;
 import au.com.quaysystems.qrm.wp.model.AvailableReport;
 import au.com.quaysystems.qrm.wp.model.Category;
-import au.com.quaysystems.qrm.wp.model.ClientSites;
 import au.com.quaysystems.qrm.wp.model.Comment;
 import au.com.quaysystems.qrm.wp.model.Control;
 import au.com.quaysystems.qrm.wp.model.Incident;
@@ -101,22 +101,31 @@ public class ReportProcessor {
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>();
 		String dbname = new BigInteger(130, new SecureRandom()).toString(32);
 		
-		dbname = "qrm3";
+	//	dbname = "qrm3";
 
 		QRMImport imp = gson.fromJson(reportData, QRMImport.class);
 		boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
 
-		try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
-			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Preparing Server Data", 30000, ipAddress);
-			createDatabase(conn, dbname);
-			ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 60000, ipAddress);
-		} catch (Exception e) {
-			e.printStackTrace();
+		Connection conn;
+		try {
+			conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass);
+			try  {
+				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Preparing Server Data", 30000, ipAddress);
+				createDatabase(conn, dbname);
+				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 60000, ipAddress);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				conn.close();
+			}
+		} catch (SQLException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
 		}
 
 		try {
 
-			final Session auditsess = PersistenceUtils.getAuditSession();
+			Session auditsess = PersistenceUtils.getAuditSession();
 			final Session sess = getSession(hostURLRoot + "/" + dbname);
 			final ReportJob job = new ReportJob();
 
@@ -165,10 +174,13 @@ public class ReportProcessor {
 					RelMatrixReportVisitor visitor = new RelMatrixReportVisitor();
 					visitor.process(taskParamMap, risks, mats.get(0));
 				}
+				
+				sess.close();
 
 				Transaction txn2 = auditsess.beginTransaction();
 				auditsess.save(job);
 				txn2.commit();
+				auditsess.close();
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -182,7 +194,9 @@ public class ReportProcessor {
 
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-			try (Connection conn = DriverManager.getConnection(hostURLRoot + "/" + dbname, hostUser, hostPass)) {
+			conn = DriverManager.getConnection(hostURLRoot + "/" + dbname, hostUser, hostPass);
+			
+			try  {
 
 				IRenderOption options = new RenderOption();
 				options.setOutputFormat(HTMLRenderOption.OUTPUT_FORMAT_PDF);
@@ -224,12 +238,14 @@ public class ReportProcessor {
 				return;
 			} finally {
 
+				conn.close();
 				try {
 					System.out.println(">>> Report Complete");
 
 					job.completed = true;
 					job.completedDate = new Date();
 
+					auditsess = PersistenceUtils.getAuditSession();
 					Transaction txn = auditsess.beginTransaction();
 					auditsess.update(job);
 					txn.commit();
@@ -254,19 +270,34 @@ public class ReportProcessor {
 				e2.printStackTrace();
 			}
 		} finally {
-//			try (Connection conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass)) {
-//				Statement stmt = conn.createStatement();
-//				stmt.addBatch("DROP DATABASE IF EXISTS `" + dbname + "`");
-//				stmt.executeBatch();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
+			try {
+				Connection conn2 = DriverManager.getConnection(hostURLRoot, hostUser, hostPass);
+				try  {
+					Statement stmt = conn2.createStatement();
+					stmt.addBatch("DROP DATABASE IF EXISTS `" + dbname + "`");
+					stmt.executeBatch();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					conn2.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private Session getSession(String hostURL) {
+	private synchronized Session getSession(String hostURL) {
 
+		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+		System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
+		
 		repConfig = new Configuration().setProperty("hibernate.cache.use_second_level_cache", "false")
+//				.setProperty("hibernate.c3p0.min_size","0")
+//				.setProperty("hibernate.c3p0.max_size","1")
+//				.setProperty("hibernate.c3p0.timeout","5")
+//				.setProperty("hibernate.c3p0.max_statements","50")
 				.setProperty("hibernate.dialect", hibernateDialect).setProperty("hibernate.connection.url", hostURL)
 				.setProperty("hibernate.connection.username", hostUser)
 				.setProperty("hibernate.connection.password", hostPass)

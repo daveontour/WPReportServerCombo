@@ -61,7 +61,7 @@ public class QRMImport {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		try {
 			for(Risk risk :risks){
@@ -69,7 +69,7 @@ public class QRMImport {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		try {
 			for(Incident incident :incidents){
@@ -77,7 +77,7 @@ public class QRMImport {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		try {
 			for(Review review :reviews){
@@ -85,7 +85,7 @@ public class QRMImport {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		try {
 			for(User user :users){
@@ -93,7 +93,7 @@ public class QRMImport {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 }

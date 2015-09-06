@@ -18,7 +18,7 @@ public class WorkQueue
 		threads = new PoolWorker[nThreads];
 
 		for (int i=0; i<nThreads; i++) {
-			threads[i] = new PoolWorker();
+			threads[i] = new PoolWorker(i);
 			threads[i].start();
 		}
 	}
@@ -27,11 +27,17 @@ public class WorkQueue
 	public void execute(Runnable r) {
 		synchronized(queue) {
 			queue.addLast(r);
+			System.out.println("Enqueuing Queue Length = "+queue.size());
 			queue.notify();
 		}
 	}
 
 	private class PoolWorker extends Thread {
+		private int threadID;
+		public PoolWorker(int i) {
+			this.threadID = i;
+		}
+
 		public void run() {
 			Runnable r;
 
@@ -44,6 +50,7 @@ public class WorkQueue
 					}
 
 					r = (Runnable) queue.removeFirst();
+					System.out.println("Report Thread "+this.threadID+ " Dequeuing Queue Length = "+queue.size());
 				}
 
 				try {

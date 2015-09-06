@@ -24,6 +24,8 @@ public class Comment {
     int parentID;
     
     public void normalise(){
+    	comment_content = comment_content.replaceAll("<p>", "");
+    	comment_content = comment_content.replaceAll("</p>", "<br/>");
     	parentID = Integer.parseInt(comment_post_ID);
     }
 }

@@ -43,7 +43,7 @@ public class Audit {
 	Long riskID;
 	
 	@OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name="AUDIT_AUDITITEM", joinColumns=@JoinColumn(name="audit_id"),inverseJoinColumns=@JoinColumn(name="audititem_id"))
+	@JoinTable(name="audit_audititem", joinColumns=@JoinColumn(name="audit_id"),inverseJoinColumns=@JoinColumn(name="audititem_id"))
 	@OrderColumn
 	AuditItem[] auditItems;
 }

@@ -1,10 +1,14 @@
 package au.com.quaysystems.qrm.wp.model;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
@@ -36,8 +40,8 @@ public class Incident {
     String lessons;
     String actions;
     String date;
-    @ElementCollection
-    @CollectionTable(name="incidentcomment", joinColumns=@JoinColumn(name="incident_id"))
+    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name="incidentcomment", joinColumns=@JoinColumn(name="incident_id"))
     @OrderColumn
     Comment[] comments;
     @ElementCollection
@@ -46,10 +50,15 @@ public class Incident {
     int [] risks;
 	public void normalise() {
 		
-		description = description.replaceAll("^<p></p>+", "");
-		lessons = lessons.replaceAll("^<p></p>+", "");
-		actions = actions.replaceAll("^<p></p>+", "");
-		
+		description = description.replaceAll("<p>", "");
+		description = description.replaceAll("</p>", "<br/><br/>");
+
+		lessons = lessons.replaceAll("<p>", "");
+		lessons = lessons.replaceAll("</p>", "<br/><br/>");
+
+		actions = actions.replaceAll("<p>", "");
+		actions = actions.replaceAll("</p>", "<br/><br/>");
+
 		if (comments == null) return;
 		for (Comment comment:comments){
 			comment.normalise();
