@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="comments">Copyright (c) 2008 &lt;&lt;Quay Systems Consulting>></property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
     <html-property name="description">QRMReportName:Review Summary Report;QRMReportDescription:Review Summary Report;QRMReportType:Review;QRMReportID:Review Summary Report;</html-property>
     <property name="units">in</property>
     <text-property name="displayName">Blank Report</text-property>
@@ -185,6 +185,7 @@
             <property name="leftMargin">0.5in</property>
             <property name="bottomMargin">0.5in</property>
             <property name="rightMargin">0.5in</property>
+            <property name="backgroundImage">watermark.png</property>
             <property name="showHeaderOnFirst">false</property>
             <page-header>
                 <text-data id="930">

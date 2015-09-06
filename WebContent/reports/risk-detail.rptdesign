@@ -85,7 +85,7 @@
         <simple-master-page name="QRM Report Master Page" id="7827" extends="QRM.QRM Report Master Page">
             <property name="leftMargin">10mm</property>
             <property name="rightMargin">10mm</property>
-            <property name="backgroundImage">WebContent/reports/watermark.png</property>
+            <property name="backgroundImage">watermark.png</property>
             <overridden-values>
                 <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
                 <ref-entry baseId="7883" id="7883"/>

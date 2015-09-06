@@ -54,6 +54,7 @@
     </styles>
     <page-setup>
         <simple-master-page name="QRM Report Master Page" id="6482" extends="QRM.QRM Report Master Page">
+            <property name="backgroundImage">watermark.png</property>
             <overridden-values>
                 <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
                 <ref-entry baseId="7883" id="7883"/>

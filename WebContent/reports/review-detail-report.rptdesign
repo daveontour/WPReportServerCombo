@@ -57,6 +57,7 @@
             <property name="leftMargin">0.5in</property>
             <property name="bottomMargin">0.5in</property>
             <property name="rightMargin">0.5in</property>
+            <property name="backgroundImage">watermark.png</property>
             <property name="showHeaderOnFirst">false</property>
             <page-header>
                 <text-data id="930">
