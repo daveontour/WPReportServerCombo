@@ -17,4 +17,10 @@ public class ReviewRiskComment {
 	int riskID;
 	@Column(columnDefinition="TEXT")
 	String comment;
+	public void normalise() {
+		// TODO Auto-generated method stub
+		comment = comment.replaceAll("<p>", "");
+		comment = comment.replaceAll("</p>", "<br/><br/>");
+		
+	}
 }

@@ -36,7 +36,18 @@ public class Review {
     @OrderColumn
     ReviewRiskComment[] riskComments;
 	public void normalise() {
-		// TODO Auto-generated method stub
+		description = description.replaceAll("<p>", "");
+		description = description.replaceAll("</p>", "<br/><br/>");
+
+		notes = notes.replaceAll("<p>", "");
+		notes = notes.replaceAll("</p>", "<br/><br/>");
+
+
+		if (riskComments == null) return;
+		for (ReviewRiskComment comment:riskComments){
+			comment.normalise();
+		}
+
 		
 	}
 }

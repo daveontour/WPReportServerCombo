@@ -2,8 +2,10 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="comments">Copyright (c) 2008 &lt;&lt;Quay Systems Consulting>></property>
     <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
-    <html-property name="description">QRMReportName:Review Summary Report;QRMReportDescription:Review Summary Report;QRMReportType:Review;QRMReportID:Review Summary Report;</html-property>
     <property name="units">in</property>
+    <method name="beforeFactory"><![CDATA[if (!params["useWatermark"].value){
+    reportContext.getDesignHandle().findMasterPage("QRM Report Master Page").setProperty("backgroundImage", "");
+}]]></method>
     <text-property name="displayName">Blank Report</text-property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="layoutPreference">auto layout</property>
@@ -14,132 +16,522 @@
         </structure>
     </list-property>
     <parameters>
-        <scalar-parameter name="showDescription" id="4567">
-            <text-property name="promptText">Show Description of Risk</text-property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <property name="distinct">false</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showCause" id="4568">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showCat" id="4569">
-            <text-property name="promptText">showCat</text-property>
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showTolerance" id="4570">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showKeyDates" id="4571">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showAreaImpacted" id="4572">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showObjectives" id="4573">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showProb" id="4574">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showImpact" id="4575">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showMitPlan" id="4576">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showControls" id="4577">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showComments" id="4578">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
-        <scalar-parameter name="showConsequence" id="4579">
-            <property name="valueType">static</property>
-            <property name="dataType">boolean</property>
-            <simple-property-list name="defaultValue">
-                <value type="constant">true</value>
-            </simple-property-list>
-            <property name="controlType">check-box</property>
-            <structure name="format"/>
-        </scalar-parameter>
+        <scalar-parameter name="useWatermark" id="7890" extends="QRM.useWatermark"/>
+        <scalar-parameter name="siteName" id="7891" extends="QRM.siteName"/>
+        <scalar-parameter name="userDisplayName" id="7892" extends="QRM.userDisplayName"/>
+        <scalar-parameter name="userEmail" id="7893" extends="QRM.userEmail"/>
     </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="7937"
+ extends="QRM.Data Source">
+            <property name="odaDriverClass">com.mysql.jdbc.NonRegisteringDriver</property>
+            <property name="odaURL">jdbc:mysql://localhost:3306/qrm3</property>
+            <property name="odaUser">root</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">YWl3MmRpaHNm</encrypted-property>
+        </oda-data-source>
+    </data-sources>
     <data-sets>
-        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Selected Reviews" id="4816"
- extends="Quay Risk Manager Library.Selected Reviews"/>
-        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Review Risk And Comments Detail" id="4976"
- extends="Quay Risk Manager Library.Review Risk And Comments Detail"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="REVIEWS" id="5076"
+ extends="QRM.REVIEWS">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">actualdate</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">notes</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">complete</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">responsible</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">reviewCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">scheddate</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">display_name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">actualdate</property>
+                    <property name="nativeName">actualdate</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="nativeName">description</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">notes</property>
+                    <property name="nativeName">notes</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">complete</property>
+                    <property name="nativeName">complete</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-7</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">responsible</property>
+                    <property name="nativeName">responsible</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">reviewCode</property>
+                    <property name="nativeName">reviewCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">scheddate</property>
+                    <property name="nativeName">scheddate</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">display_name</property>
+                    <property name="nativeName">display_name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="REVIEWRISKS" id="7896"
+ extends="QRM.REVIEWRISKS"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="REVIEW_REVIEWRISKCOMMENT" id="7938">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">review_id</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">review_id</text-property>
+                    <text-property name="heading">review_id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">reviewriskcomment_id</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">reviewriskcomment_id</text-property>
+                    <text-property name="heading">reviewriskcomment_id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">riskComments_ORDER</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">riskComments_ORDER</text-property>
+                    <text-property name="heading">riskComments_ORDER</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">review_id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">reviewriskcomment_id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">riskComments_ORDER</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">review_id</property>
+                    <property name="nativeName">review_id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">reviewriskcomment_id</property>
+                    <property name="nativeName">reviewriskcomment_id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">riskComments_ORDER</property>
+                    <property name="nativeName">riskComments_ORDER</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select *
+from review_reviewriskcomment]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>review_id</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+            <design:precision>20</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>review_id</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>review_id</design:label>
+            <design:formattingHints>
+              <design:displaySize>20</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>reviewriskcomment_id</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+            <design:precision>20</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>reviewriskcomment_id</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>reviewriskcomment_id</design:label>
+            <design:formattingHints>
+              <design:displaySize>20</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>riskComments_ORDER</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>4</design:nativeDataTypeCode>
+            <design:precision>11</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>riskComments_ORDER</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>riskComments_ORDER</design:label>
+            <design:formattingHints>
+              <design:displaySize>11</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="REVIEWCOMMENTS" id="7942">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">id</text-property>
+                    <text-property name="heading">id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">comment</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">comment</text-property>
+                    <text-property name="heading">comment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">riskID</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">riskID</text-property>
+                    <text-property name="heading">riskID</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">comment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">riskID</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">comment</property>
+                    <property name="nativeName">comment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">riskID</property>
+                    <property name="nativeName">riskID</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select *
+from reviewriskcomment]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>id</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+            <design:precision>20</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>id</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>id</design:label>
+            <design:formattingHints>
+              <design:displaySize>20</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>comment</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>65535</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>comment</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>comment</design:label>
+            <design:formattingHints>
+              <design:displaySize>65535</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>riskID</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>4</design:nativeDataTypeCode>
+            <design:precision>11</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>riskID</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>riskID</design:label>
+            <design:formattingHints>
+              <design:displaySize>11</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <joint-data-set name="REVIEWRISKCOMMENTS" id="7943">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">REVIEW_REVIEWRISKCOMMENT::review_id</property>
+                    <property name="alias">review_id</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">REVIEW_REVIEWRISKCOMMENT::review_id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">REVIEW_REVIEWRISKCOMMENT::riskComments_ORDER</property>
+                    <property name="alias">riskComments_ORDER</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">REVIEW_REVIEWRISKCOMMENT::riskComments_ORDER</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">REVIEWCOMMENTS::comment</property>
+                    <property name="alias">comment</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">REVIEWCOMMENTS::comment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">REVIEWCOMMENTS::id</property>
+                    <property name="alias">id</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">REVIEWCOMMENTS::id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">REVIEW_REVIEWRISKCOMMENT::reviewriskcomment_id</property>
+                    <property name="alias">reviewriskcomment_id</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">REVIEW_REVIEWRISKCOMMENT::reviewriskcomment_id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">REVIEWCOMMENTS::riskID</property>
+                    <property name="alias">riskID</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">REVIEWCOMMENTS::riskID</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">review_id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">reviewriskcomment_id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">riskComments_ORDER</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">comment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">riskID</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <simple-property-list name="dataSets">
+                <value>REVIEW_REVIEWRISKCOMMENT</value>
+                <value>REVIEWCOMMENTS</value>
+            </simple-property-list>
+            <list-property name="joinConditions">
+                <structure>
+                    <property name="joinType">inner</property>
+                    <property name="joinOperator">eq</property>
+                    <property name="leftDataSet">REVIEW_REVIEWRISKCOMMENT</property>
+                    <property name="rightDataSet">REVIEWCOMMENTS</property>
+                    <expression name="leftExpression">dataSetRow["reviewriskcomment_id"]</expression>
+                    <expression name="rightExpression">dataSetRow["id"]</expression>
+                </structure>
+            </list-property>
+        </joint-data-set>
     </data-sets>
     <styles>
         <style name="crosstab-cell" id="4">
@@ -170,7 +562,7 @@
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">1pt</property>
         </style>
-        <style name="Sub Heading" id="1351">
+        <style name="Sub-Heading" id="1351">
             <property name="fontFamily">sans-serif</property>
             <property name="fontWeight">bold</property>
             <property name="color">#0000FF</property>
@@ -178,90 +570,26 @@
         </style>
     </styles>
     <page-setup>
-        <simple-master-page name="Simple MasterPage" id="2">
-            <property name="type">a4</property>
-            <property name="orientation">landscape</property>
-            <property name="topMargin">0.5in</property>
-            <property name="leftMargin">0.5in</property>
-            <property name="bottomMargin">0.5in</property>
-            <property name="rightMargin">0.5in</property>
+        <simple-master-page name="QRM Report Master Page" id="5081" extends="QRM.QRM Report Master Page">
+            <property name="orientation">portrait</property>
             <property name="backgroundImage">watermark.png</property>
-            <property name="showHeaderOnFirst">false</property>
-            <page-header>
-                <text-data id="930">
-                    <property name="fontFamily">sans-serif</property>
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <property name="paddingTop">2pt</property>
-                    <property name="paddingBottom">2pt</property>
-                    <property name="paddingRight">5pt</property>
-                    <property name="textAlign">right</property>
-                    <expression name="valueExpr">"Review Summary Report"</expression>
-                    <property name="contentType">html</property>
-                </text-data>
-            </page-header>
-            <page-footer>
-                <grid id="1278">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <property name="width">100%</property>
-                    <column id="1279">
-                        <property name="width">4.770833333333333in</property>
-                    </column>
-                    <column id="1295">
-                        <property name="width">1.4479166666666667in</property>
-                    </column>
-                    <column id="1280"/>
-                    <row id="1281">
-                        <cell id="1282">
-                            <text id="4921">
-                                <property name="fontFamily">sans-serif</property>
-                                <property name="fontSize">small</property>
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[Created on: <value-of>new Date()</value-of>]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1294">
-                            <label id="1296">
-                                <property name="fontFamily">sans-serif</property>
-                                <property name="fontSize">small</property>
-                                <property name="fontWeight">normal</property>
-                                <property name="textAlign">center</property>
-                                <text-property name="text">Quay Risk Manager</text-property>
-                            </label>
-                        </cell>
-                        <cell id="1283">
-                            <text-data id="1285">
-                                <property name="fontFamily">sans-serif</property>
-                                <property name="fontSize">small</property>
-                                <property name="textAlign">right</property>
-                                <expression name="valueExpr">"Licensed to: "+params["Company"]</expression>
-                                <property name="contentType">html</property>
-                            </text-data>
-                        </cell>
-                    </row>
-                </grid>
-            </page-footer>
+            <overridden-values>
+                <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
+                <ref-entry baseId="7883" id="7883"/>
+                <ref-entry baseId="7884" id="7884"/>
+                <ref-entry baseId="7885" id="7885"/>
+                <ref-entry baseId="7886" id="7886"/>
+                <ref-entry baseId="7888" name="NewText" id="7888"/>
+                <ref-entry baseId="7887" id="7887"/>
+                <ref-entry baseId="7889" name="NewTextData27" id="7889"/>
+                <ref-entry baseId="7873" name="NewGrid6" id="7873"/>
+                <ref-entry baseId="7874" id="7874"/>
+                <ref-entry baseId="7875" id="7875"/>
+                <ref-entry baseId="7876" id="7876"/>
+                <ref-entry baseId="7877" id="7877"/>
+                <ref-entry baseId="7878" id="7878"/>
+                <ref-entry baseId="7881" name="NewTextData26" id="7881"/>
+            </overridden-values>
         </simple-master-page>
     </page-setup>
     <body>
@@ -286,7 +614,7 @@
                         <property name="fontSize">18pt</property>
                         <property name="fontWeight">bold</property>
                         <property name="textAlign">right</property>
-                        <text-property name="text">Review Summary Report</text-property>
+                        <text-property name="text">Review Detail Report</text-property>
                     </label>
                 </cell>
             </row>
@@ -294,139 +622,94 @@
         <table id="4817">
             <property name="marginTop">30pt</property>
             <property name="height">0.7708333333333334in</property>
-            <property name="width">10.3125in</property>
-            <property name="dataSet">Selected Reviews</property>
+            <property name="width">7.53125in</property>
+            <property name="dataSet">REVIEWS</property>
             <list-property name="boundDataColumns">
                 <structure>
-                    <property name="name">REVIEW_ID</property>
-                    <text-property name="displayName">REVIEW_ID</text-property>
-                    <expression name="expression">dataSetRow["REVIEW_ID"]</expression>
+                    <property name="name">id</property>
+                    <text-property name="displayName">id</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
                     <property name="dataType">decimal</property>
                 </structure>
                 <structure>
-                    <property name="name">PROJECT_ID</property>
-                    <text-property name="displayName">PROJECT_ID</text-property>
-                    <expression name="expression">dataSetRow["PROJECT_ID"]</expression>
-                    <property name="dataType">decimal</property>
-                </structure>
-                <structure>
-                    <property name="name">TITLE</property>
-                    <text-property name="displayName">TITLE</text-property>
-                    <expression name="expression">dataSetRow["TITLE"]</expression>
+                    <property name="name">actualdate</property>
+                    <text-property name="displayName">actualdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["actualdate"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">SCHEDULEDDATE</property>
-                    <text-property name="displayName">SCHEDULEDDATE</text-property>
-                    <expression name="expression">dataSetRow["SCHEDULEDDATE"]</expression>
-                    <property name="dataType">date-time</property>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">ACTUALDATE</property>
-                    <text-property name="displayName">ACTUALDATE</text-property>
-                    <expression name="expression">dataSetRow["ACTUALDATE"]</expression>
-                    <property name="dataType">date-time</property>
+                    <property name="name">notes</property>
+                    <text-property name="displayName">notes</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["notes"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">REVIEWCOMPLETE</property>
-                    <text-property name="displayName">REVIEWCOMPLETE</text-property>
-                    <expression name="expression">dataSetRow["REVIEWCOMPLETE"]</expression>
+                    <property name="name">responsible</property>
+                    <text-property name="displayName">responsible</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["responsible"]</expression>
                     <property name="dataType">integer</property>
                 </structure>
                 <structure>
-                    <property name="name">REVIEWCOMMENTS</property>
-                    <text-property name="displayName">REVIEWCOMMENTS</text-property>
-                    <expression name="expression">dataSetRow["REVIEWCOMMENTS"]</expression>
+                    <property name="name">reviewCode</property>
+                    <text-property name="displayName">reviewCode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["reviewCode"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">MAILUPDATEDATE</property>
-                    <text-property name="displayName">MAILUPDATEDATE</text-property>
-                    <expression name="expression">dataSetRow["MAILUPDATEDATE"]</expression>
-                    <property name="dataType">date-time</property>
+                    <property name="name">scheddate</property>
+                    <text-property name="displayName">scheddate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["scheddate"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">MAILUPDATECOMPLETE</property>
-                    <text-property name="displayName">MAILUPDATECOMPLETE</text-property>
-                    <expression name="expression">dataSetRow["MAILUPDATECOMPLETE"]</expression>
+                    <property name="name">title</property>
+                    <text-property name="displayName">title</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">display_name</property>
+                    <text-property name="displayName">display_name</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["display_name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">complete</property>
+                    <text-property name="displayName">complete</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["complete"]</expression>
                     <property name="dataType">integer</property>
-                </structure>
-                <structure>
-                    <property name="name">ID</property>
-                    <text-property name="displayName">ID</text-property>
-                    <expression name="expression">dataSetRow["ID"]</expression>
-                    <property name="dataType">decimal</property>
-                </structure>
-                <structure>
-                    <property name="name">SESSIONID</property>
-                    <text-property name="displayName">SESSIONID</text-property>
-                    <expression name="expression">dataSetRow["SESSIONID"]</expression>
-                    <property name="dataType">decimal</property>
-                </structure>
-                <structure>
-                    <property name="name">DATAELEMENT</property>
-                    <text-property name="displayName">DATAELEMENT</text-property>
-                    <expression name="expression">dataSetRow["DATAELEMENT"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">DATASTRING</property>
-                    <text-property name="displayName">DATASTRING</text-property>
-                    <expression name="expression">dataSetRow["DATASTRING"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">RANK</property>
-                    <text-property name="displayName">RANK</text-property>
-                    <expression name="expression">dataSetRow["RANK"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-                <structure>
-                    <property name="name">DATABLOB</property>
-                    <text-property name="displayName">DATABLOB</text-property>
-                    <expression name="expression">dataSetRow["DATABLOB"]</expression>
-                    <property name="dataType">blob</property>
-                </structure>
-                <structure>
-                    <property name="name">IMAGEBLOB1</property>
-                    <text-property name="displayName">IMAGEBLOB1</text-property>
-                    <expression name="expression">dataSetRow["IMAGEBLOB1"]</expression>
-                    <property name="dataType">blob</property>
-                </structure>
-                <structure>
-                    <property name="name">IMAGEBLOB2</property>
-                    <text-property name="displayName">IMAGEBLOB2</text-property>
-                    <expression name="expression">dataSetRow["IMAGEBLOB2"]</expression>
-                    <property name="dataType">blob</property>
-                </structure>
-                <structure>
-                    <property name="name">DATAID</property>
-                    <text-property name="displayName">DATAID</text-property>
-                    <expression name="expression">dataSetRow["DATAID"]</expression>
-                    <property name="dataType">decimal</property>
                 </structure>
             </list-property>
-            <column id="4913"/>
+            <column id="4913">
+                <property name="width">3.8541666666666665in</property>
+            </column>
             <column id="4914">
-                <property name="width">10%</property>
+                <property name="width">1.0625in</property>
             </column>
-            <column id="4915">
-                <property name="width">10%</property>
+            <column id="8006">
+                <property name="width">0.9479166666666666in</property>
             </column>
-            <column id="5089">
-                <property name="width">10%</property>
+            <column id="8015">
+                <property name="width">1.6666666666666667in</property>
             </column>
             <header>
-                <row id="5080">
-                    <cell id="5081">
+                <row id="7998">
+                    <cell id="7999">
                         <label id="4944">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
                             <property name="marginTop">0pt</property>
+                            <property name="textAlign">left</property>
                             <text-property name="text">Review</text-property>
                         </label>
                     </cell>
-                    <cell id="5082">
+                    <cell id="8000">
                         <label id="4945">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
@@ -435,7 +718,7 @@
                             <text-property name="text">Scheduled Date</text-property>
                         </label>
                     </cell>
-                    <cell id="5083">
+                    <cell id="8002">
                         <label id="4946">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
@@ -444,7 +727,7 @@
                             <text-property name="text">Actual Date</text-property>
                         </label>
                     </cell>
-                    <cell id="5084">
+                    <cell id="8013">
                         <label id="5056">
                             <property name="fontFamily">sans-serif</property>
                             <property name="fontWeight">bold</property>
@@ -456,56 +739,44 @@
                 </row>
             </header>
             <detail>
-                <row id="5076">
-                    <list-property name="highlightRules">
-                        <structure>
-                            <property name="operator">is-true</property>
-                            <property name="backgroundColor">#C0C0C0</property>
-                            <expression name="testExpr">row[0]%2==0</expression>
-                        </structure>
-                    </list-property>
-                    <cell id="5077">
-                        <data id="4861">
-                            <property name="resultSetColumn">TITLE</property>
-                        </data>
+                <row id="8007">
+                    <cell id="8008">
+                        <text-data id="8012">
+                            <expression name="valueExpr">row["reviewCode"]+" - "+row["title"]</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                     </cell>
-                    <cell id="5078">
-                        <data id="4863">
+                    <cell id="8009">
+                        <data id="5077">
                             <structure name="dateTimeFormat">
-                                <property name="category">Long Date</property>
-                                <property name="pattern">Long Date</property>
+                                <property name="category">Medium Date</property>
+                                <property name="pattern">Medium Date</property>
+                                <property name="locale">en_AU</property>
                             </structure>
                             <property name="textAlign">center</property>
-                            <property name="resultSetColumn">SCHEDULEDDATE</property>
+                            <property name="resultSetColumn">scheddate</property>
                         </data>
                     </cell>
-                    <cell id="5079">
-                        <data id="4865">
+                    <cell id="8010">
+                        <data id="5078">
                             <structure name="dateTimeFormat">
-                                <property name="category">Long Date</property>
-                                <property name="pattern">Long Date</property>
+                                <property name="category">Medium Date</property>
+                                <property name="pattern">Medium Date</property>
+                                <property name="locale">en_AU</property>
                             </structure>
                             <property name="textAlign">center</property>
-                            <property name="resultSetColumn">ACTUALDATE</property>
+                            <property name="resultSetColumn">actualdate</property>
                         </data>
                     </cell>
-                    <cell id="5086">
-                        <text-data id="5057">
+                    <cell id="8014">
+                        <text-data id="7997">
                             <property name="textAlign">center</property>
-                            <expression name="valueExpr">(row["REVIEWCOMPLETE"]>0)?"Completed":"Not Completed"</expression>
+                            <expression name="valueExpr">row["complete"]?"Complete":"Outstanding"</expression>
                             <property name="contentType">html</property>
                         </text-data>
                     </cell>
                 </row>
             </detail>
-            <footer>
-                <row id="4892">
-                    <cell id="4895"/>
-                    <cell id="4896"/>
-                    <cell id="4897"/>
-                    <cell id="5088"/>
-                </row>
-            </footer>
         </table>
     </body>
 </report>
