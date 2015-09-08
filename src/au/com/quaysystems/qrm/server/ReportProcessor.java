@@ -101,7 +101,7 @@ public class ReportProcessor {
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>();
 		String dbname = new BigInteger(130, new SecureRandom()).toString(32);
 		
-		dbname = "qrm3";
+//		dbname = "qrm3";
 
 		QRMImport imp = gson.fromJson(reportData, QRMImport.class);
 		boolean registeredSite = PersistenceUtils.checkSiteKey(imp.siteKey, imp.siteID);
@@ -270,21 +270,21 @@ public class ReportProcessor {
 				e2.printStackTrace();
 			}
 		} finally {
-//			try {
-//				Connection conn2 = DriverManager.getConnection(hostURLRoot, hostUser, hostPass);
-//				try  {
-//					Statement stmt = conn2.createStatement();
-//					stmt.addBatch("DROP DATABASE IF EXISTS `" + dbname + "`");
-//					stmt.executeBatch();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				} finally {
-//					conn2.close();
-//				}
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			try {
+				Connection conn2 = DriverManager.getConnection(hostURLRoot, hostUser, hostPass);
+				try  {
+					Statement stmt = conn2.createStatement();
+					stmt.addBatch("DROP DATABASE IF EXISTS `" + dbname + "`");
+					stmt.executeBatch();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					conn2.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
