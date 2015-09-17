@@ -10,5 +10,5 @@ public class Member {
 	public Long lastRequest;
 	public String callback;
 	public Queue<String> queue = new LinkedList<String>();
-	public String ip;	
+	public String sessionToken;	
 }

@@ -53,6 +53,8 @@ public class QRMImport {
     public String userEmail;
     @Transient
     public String userLogin;
+    @Transient
+    public String sessionToken;
 
 	public void normalise(boolean prepareMatrix) {
 		try {

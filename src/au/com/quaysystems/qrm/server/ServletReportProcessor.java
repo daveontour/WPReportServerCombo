@@ -18,16 +18,12 @@ public class ServletReportProcessor  extends HttpServlet{
 			String reportData = req.getParameter("reportData");
 			String reportID = req.getParameter("reportID");
 			String reportEmail = req.getParameter("reportEmail");
-			String ipAddress = req.getHeader("X-FORWARDED-FOR"); 
-			
-			if (ipAddress == null) {  
-				ipAddress = req.getRemoteAddr();  
-			}
-			
+			String sessionToken = req.getParameter("sessionToken"); 
+					
 			try {
-				AsyncMessage message = new AsyncMessage("reportChannel", reportData, reportID, ipAddress);
+				AsyncMessage message = new AsyncMessage("reportChannel", reportData, reportID, sessionToken);
 				message.send();
-				ServletUserMessageManager.notifyUserMessage(reportEmail, "Report Queued for Execution",1500,ipAddress);
+				ServletUserMessageManager.notifyUserMessage(reportEmail, "Report Queued for Execution",1500,sessionToken);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

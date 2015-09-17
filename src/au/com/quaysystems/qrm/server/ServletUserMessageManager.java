@@ -88,14 +88,9 @@ public class ServletUserMessageManager extends HttpServlet{
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
 		final String sessID = req.getSession().getId();
-		String ipAddress = req.getHeader("X-FORWARDED-FOR"); 
-		
-		if (ipAddress == null) {  
-			ipAddress = req.getRemoteAddr();  
-		}
-		
-
+		final String sessionToken = req.getParameter("sessionToken");
 		final String userEmail = req.getParameter("userEmail");
+
 		Member member = sessionMemberMap.get(sessID);
 		
 		if (member == null){
@@ -104,7 +99,7 @@ public class ServletUserMessageManager extends HttpServlet{
 			member.userEmail = userEmail;
 			member.callback = req.getParameter("callback");
 			member.lastRequest = new Date().getTime();
-			member.ip = ipAddress;
+			member.sessionToken = sessionToken;
 			sessionMemberMap.put(sessID, member);
 		} else {
 			member.callback = req.getParameter("callback");
@@ -169,16 +164,11 @@ public class ServletUserMessageManager extends HttpServlet{
 	}
 
 
-	public static synchronized void notifyUserMessage(String userEmail, String msg, Integer dur, String ip) throws IOException	{
+	public static synchronized void notifyUserMessage(String userEmail, String msg, Integer dur, String sessionToken) throws IOException	{
 
 		for (Member m : sessionMemberMap.values()){
-
-//			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
-//				continue;
-//			}
-// Checking the ip is no longer valid as the data for the report comes from the server rather than the client			
-			
-			if (!m.userEmail.equalsIgnoreCase(userEmail)){
+		
+			if (!m.userEmail.equalsIgnoreCase(userEmail) ||  !m.sessionToken.equalsIgnoreCase(sessionToken)){
 				continue;
 			}
 
@@ -192,14 +182,14 @@ public class ServletUserMessageManager extends HttpServlet{
 		}
 	}
 	
-	public static synchronized void notifyUserReportReady(String userEmail, Long id, String ip) throws IOException	{
+	public static synchronized void notifyUserReportReady(String userEmail, Long id, String sessionToken) throws IOException	{
 
 		for (Member m : sessionMemberMap.values()){
 
 //			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
 //				continue;
 //			}
-			if (!m.userEmail.equalsIgnoreCase(userEmail)){
+			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.sessionToken.equalsIgnoreCase(sessionToken)){
 			continue;
 		}
 
