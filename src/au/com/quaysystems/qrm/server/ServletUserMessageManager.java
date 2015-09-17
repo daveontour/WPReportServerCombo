@@ -173,7 +173,12 @@ public class ServletUserMessageManager extends HttpServlet{
 
 		for (Member m : sessionMemberMap.values()){
 
-			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
+//			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
+//				continue;
+//			}
+// Checking the ip is no longer valid as the data for the report comes from the server rather than the client			
+			
+			if (!m.userEmail.equalsIgnoreCase(userEmail)){
 				continue;
 			}
 
@@ -191,9 +196,12 @@ public class ServletUserMessageManager extends HttpServlet{
 
 		for (Member m : sessionMemberMap.values()){
 
-			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
-				continue;
-			}
+//			if (!m.userEmail.equalsIgnoreCase(userEmail) || !m.ip.equalsIgnoreCase(ip)){
+//				continue;
+//			}
+			if (!m.userEmail.equalsIgnoreCase(userEmail)){
+			continue;
+		}
 
 			AsyncContext ac = asyncContexts.get(m.sessionID);
 			if (ac != null){
