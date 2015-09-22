@@ -3,6 +3,7 @@ package au.com.quaysystems.qrm.server;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -11,9 +12,9 @@ import javax.servlet.annotation.WebListener;
 public class ServletListenerConcurrentManager implements ServletContextListener {
 
 	private static final Properties configProp = new Properties();
-	public static ReportProcessor repProcessor;
 
 	public static WorkQueue reportQueue;
+	public static  ServletContext context;
 	public ServletListenerConcurrentManager(){	}
 
 	public void contextInitialized(final ServletContextEvent se) {
@@ -28,9 +29,8 @@ public class ServletListenerConcurrentManager implements ServletContextListener 
 		if (reportThreads == null){
 			reportThreads = "2";
 		}
-
 		
-		repProcessor = new ReportProcessor(se.getServletContext());
+		context = se.getServletContext();
 		reportQueue = new WorkQueue(Integer.parseInt(reportThreads));
 	}
 	public void contextDestroyed(final ServletContextEvent arg0) {}

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class ServletReportProcessor  extends HttpServlet{
-
 	
 	public void service(HttpServletRequest req, HttpServletResponse response) throws IOException  {
 		System.out.println(">>> Service Report");
@@ -21,9 +20,9 @@ public class ServletReportProcessor  extends HttpServlet{
 			String sessionToken = req.getParameter("sessionToken"); 
 					
 			try {
-				AsyncMessage message = new AsyncMessage("reportChannel", reportData, reportID, sessionToken);
+				AsyncMessage message = new AsyncMessage(reportData, reportID, sessionToken);
 				message.send();
-				ServletUserMessageManager.notifyUserMessage(reportEmail, "Report Queued for Execution",1500,sessionToken);
+				ServletUserMessageManager.notifyUserMessage(reportEmail, "Report Queued for Execution",sessionToken);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

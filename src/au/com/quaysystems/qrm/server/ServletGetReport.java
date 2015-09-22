@@ -30,11 +30,7 @@ public class ServletGetReport  extends HttpServlet{
 		String userLogin = req.getParameter("userLogin");
 		String siteKey = req.getParameter("siteKey");
 		String id = req.getParameter("id");
-		String ipAddress = req.getHeader("X-FORWARDED-FOR"); 
-		
-		if (ipAddress == null) {  
-			ipAddress = req.getRemoteAddr();  
-		}
+		String sessionToken = req.getParameter("sessionToken"); 
 		
 		try {
 			Connection conn = DriverManager.getConnection(hostURLReportAudit, hostUser, hostPass);
@@ -61,7 +57,7 @@ public class ServletGetReport  extends HttpServlet{
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				ServletUserMessageManager.notifyUserMessage(userEmail, "Error Retreiving Report.", 3000, ipAddress);
+				ServletUserMessageManager.notifyUserMessage(userEmail, "Error Retreiving Report.", sessionToken);
 			} finally {
 				conn.close();
 			}

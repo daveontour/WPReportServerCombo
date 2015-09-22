@@ -164,8 +164,9 @@ public class ServletUserMessageManager extends HttpServlet{
 	}
 
 
-	public static synchronized void notifyUserMessage(String userEmail, String msg, Integer dur, String sessionToken) throws IOException	{
+	public static synchronized void notifyUserMessage(String userEmail, String msg, String sessionToken) throws IOException	{
 
+		System.out.printf("User Email: %s, Session Token: %s, Message: %s\n", userEmail, sessionToken, msg );
 		for (Member m : sessionMemberMap.values()){
 		
 			if (!m.userEmail.equalsIgnoreCase(userEmail) ||  !m.sessionToken.equalsIgnoreCase(sessionToken)){
@@ -174,10 +175,10 @@ public class ServletUserMessageManager extends HttpServlet{
 
 			AsyncContext ac = asyncContexts.get(m.sessionID);
 			if (ac != null){
-				sendMessage(ac, m.callback+"({\"msg\":\"true\",\"message\":\""+msg+"\", \"duration\":"+dur+"})");
+				sendMessage(ac, m.callback+"({\"msg\":\"true\",\"message\":\""+msg+"\"})");
 				ac.complete();
 			} else {
-				m.queue.add(m.callback+"({\"msg\":\"true\",\"message\":\""+msg+"\", \"duration\":"+dur+"})");
+				m.queue.add(m.callback+"({\"msg\":\"true\",\"message\":\""+msg+"\"})");
 			}
 		}
 	}

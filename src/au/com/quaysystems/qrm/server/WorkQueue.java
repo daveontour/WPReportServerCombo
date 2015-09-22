@@ -4,9 +4,10 @@ import java.util.LinkedList;
 
 public class WorkQueue
 {
-	private final PoolWorker[] threads;
+//	private final PoolWorker[] threads;
 	@SuppressWarnings("rawtypes")
 	private final LinkedList queue;
+private PoolWorker worker;
 	
 	public int getQueueLength(){
 		return queue.size();
@@ -15,12 +16,14 @@ public class WorkQueue
 	@SuppressWarnings("rawtypes")
 	public WorkQueue(int nThreads) {
 		queue = new LinkedList();
-		threads = new PoolWorker[nThreads];
-
-		for (int i=0; i<nThreads; i++) {
-			threads[i] = new PoolWorker(i);
-			threads[i].start();
-		}
+		worker = new PoolWorker(1);
+		worker.start();
+//		threads = new PoolWorker[nThreads];
+//
+//		for (int i=0; i<nThreads; i++) {
+//			threads[i] = new PoolWorker(i);
+//			threads[i].start();
+//		}
 	}
 
 	@SuppressWarnings("unchecked")

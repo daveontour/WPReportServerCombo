@@ -95,7 +95,7 @@ public class ReportProcessor {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void deliver(String reportData, String reportID, String ipAddress) {
+	public void deliver(String reportData, String reportID, String sessionToken) {
 
 		System.out.println(">>> Executing Report");
 		HashMap<Object, Object> taskParamMap = new HashMap<Object, Object>();
@@ -110,9 +110,9 @@ public class ReportProcessor {
 		try {
 			conn = DriverManager.getConnection(hostURLRoot, hostUser, hostPass);
 			try  {
-				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Preparing Server Data", 30000, ipAddress);
+				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Preparing Server Data",sessionToken);
 				createDatabase(conn, dbname);
-				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.", 60000, ipAddress);
+				ServletUserMessageManager.notifyUserMessage(imp.userEmail, "Report Executing. Please Standby.",  sessionToken);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -153,7 +153,7 @@ public class ReportProcessor {
 				job.reportID = reportID;
 				job.reportName = reportName;
 				job.submittedDate = new Date();
-				job.ip = ipAddress;
+				job.ip = sessionToken;
 				job.reportTitle = report.title;
 
 				boolean prepareMatrix = false;
@@ -185,7 +185,7 @@ public class ReportProcessor {
 			} catch (Exception e) {
 				e.printStackTrace();
 				try  {
-					ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG001", 3000, ipAddress);
+					ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG001", sessionToken);
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -219,7 +219,7 @@ public class ReportProcessor {
 				} catch (Exception e) {
 					e.printStackTrace();
 					try  {
-						ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG002", 3000, ipAddress);
+						ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG002", sessionToken);
 						return;
 					} catch (Exception e2) {
 						e2.printStackTrace();
@@ -231,7 +231,7 @@ public class ReportProcessor {
 			} catch (Exception e) {
 				e.printStackTrace();
 				try  {
-					ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG003", 3000, ipAddress);
+					ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG003", sessionToken);
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -251,7 +251,7 @@ public class ReportProcessor {
 					txn.commit();
 
 					try {
-						ServletUserMessageManager.notifyUserReportReady(imp.userEmail, job.id, ipAddress);
+						ServletUserMessageManager.notifyUserReportReady(imp.userEmail, job.id, sessionToken);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -265,7 +265,7 @@ public class ReportProcessor {
 		} catch (Exception e) {
 			e.printStackTrace();
 			try  {
-				ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG004", 3000, ipAddress);
+				ServletUserMessageManager.notifyUserMessage(imp.userEmail,"Sorry, an error was encountered on the Report Server - MG004", sessionToken);
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
